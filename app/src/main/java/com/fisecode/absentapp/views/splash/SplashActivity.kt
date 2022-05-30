@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.fisecode.absentapp.MainActivity
+import com.fisecode.absentapp.views.main.MainActivity
 import com.fisecode.absentapp.R
 import org.jetbrains.anko.startActivity
 
