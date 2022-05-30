@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Absent App</string>
+    <string name="todo">TODO</string>
+    <string name="hello_sign_in_your_account">Hello, Sign In Your Account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
 </resources>
