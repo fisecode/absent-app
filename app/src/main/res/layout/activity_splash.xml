@@ -23,14 +23,18 @@
         android:layout_height="180dp"
         android:src="@drawable/top_bubble"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/todo" />
 
     <ImageView
         android:layout_width="220dp"
         android:layout_height="220dp"
+        android:contentDescription="@string/todo"
         android:src="@drawable/bottom_bubble"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:ignore="ImageContrastCheck" />
 
 
 
