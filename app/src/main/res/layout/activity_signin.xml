@@ -19,7 +19,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/todo"
-            android:src="@drawable/img_signin" />
+            android:src="@drawable/img_signin"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,8 +37,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
             android:textColorHint="@android:color/darker_gray"
-            app:hintEnabled="true"
-            app:boxStrokeWidth="0dp">
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email_signin"
@@ -56,8 +57,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
             android:textColorHint="@android:color/darker_gray"
-            app:hintEnabled="true"
-            app:boxStrokeWidth="0dp"
+            app:hintEnabled="false"
             app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -82,19 +82,18 @@
             android:textColor="@color/color_primary"
             android:textStyle="bold"
             android:layout_gravity="end"
-            android:text="@string/forgot_password"
-            android:layout_marginTop="20dp"/>
-
+            android:text="@string/forgot_password"/>
 
         <Button
             android:id="@+id/btn_signin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:background="@drawable/bg_btn_primary"
             android:text="@string/sign_in"
             android:textStyle="bold"
-            tools:ignore="TextContrastCheck" />
+            android:textColor="@color/white"
+            android:layout_marginBottom="20dp"
+            tools:ignore="TextContrastCheck"/>
 
     </LinearLayout>
 

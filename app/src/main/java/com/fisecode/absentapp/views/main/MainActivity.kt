@@ -47,5 +47,6 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.frame_main, fragment)
             .addToBackStack(null)
+            .commit()
     }
 }

@@ -13,14 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AbsentApp"
         tools:targetApi="31">
-        <activity
-            android:name=".ForgotPasswordActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.signin.SignInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.splash.SplashActivity"
+        <activity android:name=".views.forgotpassword.ForgotPasswordActivity"/>
+        <activity android:name=".views.signin.SignInActivity"/>
+        <activity android:name=".views.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,9 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".views.main.MainActivity"
-            android:exported="false" />
+        <activity android:name=".views.main.MainActivity"/>
     </application>
 
 </manifest>

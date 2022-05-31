@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.fisecode.absentapp.views.main.MainActivity
 import com.fisecode.absentapp.R
+import com.fisecode.absentapp.views.signin.SignInActivity
 import org.jetbrains.anko.startActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -18,7 +18,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun afterDelayGoToLogin() {
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity<MainActivity>()
+            startActivity<SignInActivity>()
             finishAffinity()
         }, 1200)
     }
