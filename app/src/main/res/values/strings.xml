@@ -11,4 +11,9 @@
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_text">-</string>
+    <string name="absent_spot">ABSENT SPOT</string>
+    <string name="employee_details">Employee Details</string>
+    <string name="logout">LOGOUT</string>
+    <string name="change_password">CHANGE PASSWORD</string>
 </resources>
