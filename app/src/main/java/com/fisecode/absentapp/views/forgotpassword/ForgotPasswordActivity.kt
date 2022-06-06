@@ -2,7 +2,6 @@ package com.fisecode.absentapp.views.forgotpassword
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityForgotPasswordBinding
 
 class ForgotPasswordActivity : AppCompatActivity() {

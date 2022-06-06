@@ -3,17 +3,32 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable-hdpi/blue_background.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable-hdpi/white_background.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bg_btn_active.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bg_btn_deactive.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bg_btn_primary.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bg_btn_profile.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bg_edit_text.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/bottom_bubble.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_add_task_24.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_password_24.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_person_40.xml" value="0.2355" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/top_bubble.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout-sw600dp/activity_signin.xml" value="0.256640625" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_change_password.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_forgot_password.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_login.xml" value="0.16510416666666666" />
-        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_main.xml" value="0.13547008547008546" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_main.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_signin.xml" value="0.28076923076923077" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_splash.xml" value="0.3242753623188406" />
-        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_profile.xml" value="0.30416666666666664" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_absent.xml" value="0.30416666666666664" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_home.xml" value="0.30416666666666664" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_time_off.xml" value="0.30416666666666664" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/menu/main_menu.xml" value="0.30416666666666664" />
       </map>
     </option>
   </component>
