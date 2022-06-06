@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_profile"
+    android:background="#eeeefb"
     tools:context=".views.profile.ProfileFragment">
 
     <ScrollView
@@ -118,7 +118,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/bg_btn_profile"
-                        android:drawableStart="@drawable/ic_baseline_password_24"
+                        android:drawableStart="@drawable/ic_baseline_lock_24"
                         android:drawablePadding="20dp"
                         android:elevation="3dp"
                         android:paddingStart="20dp"

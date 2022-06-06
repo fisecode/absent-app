@@ -20,4 +20,8 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="time_off">Time Off</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="id">ID :</string>
+    <string name="check_out">Check Out</string>
+    <string name="check_in">Check In</string>
 </resources>
