@@ -7,7 +7,7 @@
     <string name="sign_in">Sign In</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="forgot_password2">Forgot Password</string>
-    <string name="home">Home</string>
+    <string name="absent">Absent</string>
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -16,4 +16,8 @@
     <string name="employee_details">Employee Details</string>
     <string name="logout">LOGOUT</string>
     <string name="change_password">CHANGE PASSWORD</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="time_off">Time Off</string>
 </resources>

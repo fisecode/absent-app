@@ -3,15 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_home"
-        android:title="@string/home"
-        android:icon="@drawable/ic_baseline_home_24"
+        android:id="@+id/action_time_off"
+        android:title="@string/time_off"
+        android:icon="@drawable/ic_baseline_edit_calendar_24"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_absent"
+        android:title="@string/absent"
+        android:icon="@drawable/ic_baseline_add_task_24"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_profile"
         android:title="@string/profile"
-        android:icon="@drawable/ic_baseline_person_24"
+        android:icon="@drawable/ic_baseline_person_outline_24"
         app:showAsAction="ifRoom"/>
 
 </menu>
