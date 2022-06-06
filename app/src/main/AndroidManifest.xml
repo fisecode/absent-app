@@ -13,9 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AbsentApp"
         tools:targetApi="31">
-        <activity
-            android:name=".views.changepassword.ChangePasswordActivity"
-            android:exported="false" />
+        <activity android:name=".views.changepassword.ChangePasswordActivity" />
         <activity android:name=".views.forgotpassword.ForgotPasswordActivity" />
         <activity android:name=".views.signin.SignInActivity" />
         <activity
