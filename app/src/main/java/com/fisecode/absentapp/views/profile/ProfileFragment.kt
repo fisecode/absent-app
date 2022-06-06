@@ -33,7 +33,7 @@ class ProfileFragment : Fragment() {
         binding?.btnChangePassword?.setOnClickListener {
             context?.startActivity<ChangePasswordActivity>()
         }
-        binding?.btnLogout?.setOnClickListener {
+        binding?.btnSignOut?.setOnClickListener {
             context?.startActivity<SignInActivity>()
             (activity as MainActivity).finishAffinity()
         }

@@ -5,8 +5,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityMainBinding
-import com.fisecode.absentapp.views.home.HomeFragment
+import com.fisecode.absentapp.views.absent.AbsentFragment
 import com.fisecode.absentapp.views.profile.ProfileFragment
+import com.fisecode.absentapp.views.timeoff.TimeOffFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,8 +24,13 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         binding.btmNavigationMain.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.action_home -> {
-                    openFragment(HomeFragment())
+                R.id.action_time_off -> {
+                    openFragment(TimeOffFragment())
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.action_absent -> {
+                    openFragment(AbsentFragment())
                     return@setOnItemSelectedListener true
                 }
 
@@ -39,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openHomeFragment() {
-        binding.btmNavigationMain.selectedItemId = R.id.action_home
+        binding.btmNavigationMain.selectedItemId = R.id.action_absent
     }
 
     private fun openFragment(fragment: Fragment) {
