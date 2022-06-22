@@ -10,5 +10,8 @@
 
     <color name="color_primary">#FFB900</color>
     <color name="color_primary_variant">#FFDD80</color>
+    <color name="color_primary_dark">#c78900</color>
+    <color name="color_bg_profile">#ECECEC</color>
+
 
 </resources>

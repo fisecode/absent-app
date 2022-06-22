@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Absent App</string>
+    <string name="todo">TODO</string>
+    <string name="hello_sign_in_your_account">Hello, Sign In Your Account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="forgot_password2">Forgot Password</string>
+    <string name="absent">Absent</string>
+    <string name="profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_text">-</string>
+    <string name="absent_spot">ABSENT SPOT</string>
+    <string name="employee_details">Employee Details</string>
+    <string name="logout">LOGOUT</string>
+    <string name="change_password">CHANGE PASSWORD</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="time_off">Time Off</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="id">ID :</string>
+    <string name="check_out">Check Out</string>
+    <string name="check_in">Check In</string>
 </resources>
