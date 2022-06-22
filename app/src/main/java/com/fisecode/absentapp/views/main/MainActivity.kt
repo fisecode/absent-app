@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         binding.btmNavigationMain.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.action_time_off -> {
+                R.id.action_leave -> {
                     openFragment(TimeOffFragment())
                     return@setOnItemSelectedListener true
                 }

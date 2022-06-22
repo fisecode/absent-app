@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_time_off"
-        android:title="@string/time_off"
+        android:id="@+id/action_leave"
+        android:title="@string/leave"
         android:icon="@drawable/ic_baseline_edit_calendar_24"
         app:showAsAction="always"/>
 
