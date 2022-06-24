@@ -25,4 +25,12 @@
     <string name="check_out">Check Out</string>
     <string name="check_in">Check In</string>
     <string name="history">History</string>
+    <string name="fab_for_leave_request">FAB for Leave Request</string>
+    <string name="status">Status</string>
+    <string name="date_start">Date Start</string>
+    <string name="date_end">Date End</string>
+    <string name="total_days">Total Days</string>
+    <string name="leave_type">Leave Type</string>
+    <string name="reason">Reason</string>
+    <string name="colon">:</string>
 </resources>
