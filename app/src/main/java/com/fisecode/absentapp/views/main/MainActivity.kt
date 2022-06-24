@@ -7,7 +7,7 @@ import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityMainBinding
 import com.fisecode.absentapp.views.absent.AbsentFragment
 import com.fisecode.absentapp.views.profile.ProfileFragment
-import com.fisecode.absentapp.views.timeoff.TimeOffFragment
+import com.fisecode.absentapp.views.leave.LeaveFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         binding.btmNavigationMain.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.action_leave -> {
-                    openFragment(TimeOffFragment())
+                    openFragment(LeaveFragment())
                     return@setOnItemSelectedListener true
                 }
 
