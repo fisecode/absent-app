@@ -13,6 +13,6 @@
     <color name="color_primary_dark">#c78900</color>
     <color name="color_bg_profile">#ECECEC</color>
     <color name="background">#FAFAFA</color>
-
+    <color name="green">#2FD686</color>
 
 </resources>

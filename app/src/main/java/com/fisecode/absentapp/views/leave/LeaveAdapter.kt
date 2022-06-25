@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ItemLeaveBinding
 import com.fisecode.absentapp.model.dummy.LeaveModel
-import kotlinx.android.synthetic.main.item_leave.view.*
 
 class LeaveAdapter (
     private val listData : List<LeaveModel>,
@@ -27,30 +26,36 @@ class LeaveAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder){
             with(listData[position]){
-                binding.tvAppliedOn.text = this.appliedOn
-                binding.tvStatusLeave.text = this.status
+                binding.tvStartDateHeader.text = this.dateStart
+                binding.tvEndDateHeader.text = this.dateEnd
+                binding.tvStatusHeader.text = this.status
                 binding.tvDateStart.text = this.dateStart
                 binding.tvDateEnd.text = this.dateEnd
                 binding.tvTotalDays.text = this.totalDays.toString()
                 binding.tvLeaveType.text = this.leaveType
+                binding.tvLeaveTypeHeader.text = this.leaveType
                 binding.tvReason.text = this.reason
                 if (this.status == "Reject") {
-                    binding.tvStatusLeave.setTextColor(Color.parseColor("#FF0000"));
-                } else if (this.status == "Pending") {
-                    binding.tvStatusLeave.setTextColor(Color.parseColor("#FFB900"));
+                    binding.tvStatusHeader.setTextColor(Color.parseColor("#F53558"));
+                } else if (this.status == "Approved") {
+                    binding.tvStatusHeader.setTextColor(Color.parseColor("#2FD686"));
+                } else {
+                    binding.tvStatusHeader.setTextColor(Color.parseColor("#FFB931"));
                 }
                 binding.clExpand.visibility = if (this.expand) View.VISIBLE else View.GONE
                 binding.clLeave.setOnClickListener {
                     this.expand = !this.expand
-                    notifyDataSetChanged()
+                    notifyItemChanged(position)
                 }
                 if (this.expand) {
-                    binding.tvStatusLeave.text = "test"
+                    binding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+                }else {
+                    binding.ivArrow.setImageResource(R.drawable.ic_baseline_keyboard_arrow_right_24)
                 }
             }
         }
     }
-    // return the size of languageList
+
     override fun getItemCount(): Int {
         return listData.size
     }

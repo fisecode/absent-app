@@ -84,15 +84,14 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/bg_btn_profile"
-                        android:drawableStart="@drawable/ic_baseline_person_40"
-                        android:drawablePadding="20dp"
-                        android:elevation="3dp"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
                         android:text="@string/employee_details"
                         android:textAlignment="viewStart"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_baseline_person_40"
+                        app:iconSize="30dp"
+                        app:iconPadding="20dp"
+                        style="@style/Widget.Material3.Button.ElevatedButton"/>
 
                     <Button
                         android:id="@+id/btn_absent_spot"
@@ -101,15 +100,14 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/bg_btn_profile"
-                        android:drawableStart="@drawable/ic_baseline_location_on_24"
-                        android:drawablePadding="20dp"
-                        android:elevation="3dp"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
                         android:text="@string/absent_spot"
                         android:textAlignment="viewStart"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_baseline_location_on_24"
+                        app:iconSize="30dp"
+                        app:iconPadding="20dp"
+                        style="@style/Widget.Material3.Button.ElevatedButton"/>
 
                     <Button
                         android:id="@+id/btn_change_password"
@@ -118,15 +116,14 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/bg_btn_profile"
-                        android:drawableStart="@drawable/ic_baseline_lock_24"
-                        android:drawablePadding="20dp"
-                        android:elevation="3dp"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
                         android:text="@string/change_password"
                         android:textAlignment="viewStart"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_baseline_lock_24"
+                        app:iconSize="30dp"
+                        app:iconPadding="20dp"
+                        style="@style/Widget.Material3.Button.ElevatedButton"/>
 
                     <Button
                         android:id="@+id/btn_sign_out"
@@ -137,9 +134,10 @@
                         android:background="@drawable/bg_btn_primary"
                         android:elevation="3dp"
                         android:text="@string/logout"
-                        android:textColor="#546E7A"
+                        android:textColor="@android:color/white"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:backgroundTint="#C1C1C1"/>
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

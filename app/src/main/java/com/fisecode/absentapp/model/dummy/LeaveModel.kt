@@ -1,8 +1,7 @@
 package com.fisecode.absentapp.model.dummy
 
-class LeaveModel (appliedOn:String, status:String, dateStart:String, dateEnd:String, totalDays:Int, leaveType:String, reason:String, expand:Boolean){
+class LeaveModel (status:String, dateStart:String, dateEnd:String, totalDays:Int, leaveType:String, reason:String, expand:Boolean){
 
-    var appliedOn = ""
     var status = ""
     var dateStart = ""
     var dateEnd = ""
@@ -12,7 +11,6 @@ class LeaveModel (appliedOn:String, status:String, dateStart:String, dateEnd:Str
     var expand = false
 
     init {
-        this.appliedOn = appliedOn
         this.status = status
         this.dateStart = dateStart
         this.dateEnd = dateEnd
