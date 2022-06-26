@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.FragmentProfileBinding
+import com.fisecode.absentapp.views.absentspot.AbsentSpotActivity
 import com.fisecode.absentapp.views.changepassword.ChangePasswordActivity
 import com.fisecode.absentapp.views.employeedetail.EmployeeDetailActivity
 import com.fisecode.absentapp.views.main.MainActivity
@@ -40,6 +41,9 @@ class ProfileFragment : Fragment() {
         }
         binding?.btnEmployeeDetails?.setOnClickListener {
             context?.startActivity<EmployeeDetailActivity>()
+        }
+        binding?.btnAbsentSpot?.setOnClickListener {
+            context?.startActivity<AbsentSpotActivity>()
         }
     }
 

@@ -48,4 +48,6 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="update_profile">Update Profile</string>
+    <string name="current_location">Current Location</string>
+    <string name="fab_absent_spot">FAB Absent Spot</string>
 </resources>

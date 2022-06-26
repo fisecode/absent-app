@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.absentspot.AbsentSpotActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/tb_absent_spot"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/color_primary"
+            app:navigationIconTint="@color/white"
+            app:title="@string/absent_spot"
+            app:titleTextAppearance="@style/appbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <fragment
+        android:id="@+id/map_absent_spot"
+        android:layout_marginTop="?actionBarSize"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_get_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/layout_bottom_sheet"
+        app:layout_anchorGravity="top|end"
+        app:backgroundTint="@color/white"
+        app:tint="@color/color_primary"
+        android:src="@drawable/ic_baseline_location_searching_24"
+        android:layout_margin="16dp"
+        android:translationY="-40dp"
+        android:contentDescription="@string/fab_absent_spot" />
+
+    <include
+        android:id="@+id/layout_bottom_sheet"
+        layout="@layout/bottom_sheet_absent_spot"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

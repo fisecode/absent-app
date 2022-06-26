@@ -12,8 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AbsentApp"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
-        <activity android:name=".views.employeedetail.EditProfileActivity"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${apiKey}" />
+        <activity android:name=".views.absentspot.AbsentSpotActivity"/>
+        <activity android:name=".views.employeedetail.EditProfileActivity" />
         <activity android:name=".views.employeedetail.EmployeeDetailActivity" />
         <activity android:name=".views.leave.LeaveRequestActivity" />
         <activity android:name=".views.history.HistoryActivity" />

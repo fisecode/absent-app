@@ -32,6 +32,8 @@
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_time_off.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/item_leave.xml" value="0.3641851106639839" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/menu/main_menu.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable-ldpi/bg_handler_bottom_sheet.xml" value="0.251" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.251" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/bg_btn_active.xml" value="0.211" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/bg_btn_profile.xml" value="0.211" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/bg_button_calendar.xml" value="0.211" />
@@ -41,6 +43,11 @@
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/ic_baseline_date_range_24.xml" value="0.211" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/ic_baseline_keyboard_arrow_left_24.xml" value="0.291" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/ic_baseline_keyboard_arrow_right_24.xml" value="0.291" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/ic_baseline_location_on_24.xml" value="0.251" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/ic_launcher_background.xml" value="0.251" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/drawable/top_bubble.xml" value="0.251" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_absent_spot.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_absent_spot_BACKUP.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_change_password.xml" value="0.33" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_edit_profile.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_employee_detail.xml" value="0.33" />
@@ -49,10 +56,14 @@
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_leave_request.xml" value="0.2937152629328773" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_main.xml" value="0.18085106382978725" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/activity_signin.xml" value="0.3052586575459598" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/bg_handler_bottom_sheet.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/bottom_sheet_absent_spot.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/dropdown_leave_type.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_absent.xml" value="0.33" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_leave.xml" value="0.5" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_profile.xml" value="0.242973708068903" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_spot_one.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_spot_two.xml" value="0.3578125" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/item_leave.xml" value="0.67" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/menu/main_menu.xml" value="0.34814814814814815" />
       </map>

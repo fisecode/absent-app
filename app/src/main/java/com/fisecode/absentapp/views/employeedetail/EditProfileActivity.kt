@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.fisecode.absentapp.BuildConfig
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityEditProfileBinding
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -24,7 +25,6 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
         init()
         onClick()
     }
@@ -35,7 +35,7 @@ class EditProfileActivity : AppCompatActivity() {
         binding.tbEditProfile.setNavigationOnClickListener {
             finish()
         }
-        binding.tgGender.addOnButtonCheckedListener{ tgGender, checkedId, isChecked ->
+        binding.tgGender.addOnButtonCheckedListener{ _, checkedId, isChecked ->
            if (isChecked){
                when (checkedId) {
                    R.id.btn_male -> Toast.makeText(this, "Button Male", Toast.LENGTH_SHORT).show()

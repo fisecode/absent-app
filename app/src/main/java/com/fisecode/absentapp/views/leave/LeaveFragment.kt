@@ -8,11 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.FragmentLeaveBinding
-import com.fisecode.absentapp.databinding.FragmentProfileBinding
 import com.fisecode.absentapp.model.dummy.LeaveModel
-import com.fisecode.absentapp.views.changepassword.ChangePasswordActivity
 import org.jetbrains.anko.startActivity
 
 class LeaveFragment : Fragment() {
@@ -33,8 +30,8 @@ class LeaveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initDataDummy()
         onClick()
-        var adapter = LeaveAdapter(leaveList)
-        var layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        val adapter = LeaveAdapter(leaveList)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding?.rcListLeave?.layoutManager = layoutManager
         binding?.rcListLeave?.adapter = adapter
         adapter.notifyDataSetChanged()
@@ -46,7 +43,7 @@ class LeaveFragment : Fragment() {
         }
     }
 
-    fun initDataDummy() {
+    private fun initDataDummy() {
         leaveList = ArrayList()
         leaveList.add(LeaveModel("Pending", "20 Jun 2022", "20 Jul 2022", 1, "Sick Leave", "Sakit", false))
         leaveList.add(LeaveModel("Reject", "27 Jun 2022", "30 Jun 2022", 3, "Personal", "Ada Keperluan Keluarga", false))

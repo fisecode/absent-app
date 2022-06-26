@@ -25,10 +25,6 @@ class LeaveRequestActivity : AppCompatActivity() {
 
         init()
         onClick()
-
-        val items = listOf("Material", "Design", "Components", "Android")
-        val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, items)
-        binding.autoCompleteTextView.setAdapter(adapter)
     }
 
     private fun onClick() {
@@ -51,5 +47,8 @@ class LeaveRequestActivity : AppCompatActivity() {
     private fun init() {
         setSupportActionBar(binding.tbLeaveRequest)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val items = listOf("Material", "Design", "Components", "Android")
+        val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, items)
+        binding.autoCompleteTextView.setAdapter(adapter)
     }
 }
