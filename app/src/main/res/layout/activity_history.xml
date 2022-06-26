@@ -19,17 +19,16 @@
                 android:id="@+id/appbar_history"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:elevation="0dp">
+                android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/tb_history"
-                    app:title="History"
-                    app:titleTextColor="@color/color_primary"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:elevation="0dp" />
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/color_primary"
+                    app:navigationIconTint="@color/white"
+                    app:title="@string/history"
+                    app:titleTextAppearance="@style/appbar"/>
 
             </com.google.android.material.appbar.AppBarLayout>
 

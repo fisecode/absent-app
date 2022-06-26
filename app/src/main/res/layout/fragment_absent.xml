@@ -303,6 +303,8 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:elevation="4dp"
+                app:backgroundTint="@color/color_primary"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 tools:ignore="TextContrastCheck" />
         </LinearLayout>
 

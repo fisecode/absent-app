@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.FragmentProfileBinding
 import com.fisecode.absentapp.views.changepassword.ChangePasswordActivity
+import com.fisecode.absentapp.views.employeedetail.EmployeeDetailActivity
 import com.fisecode.absentapp.views.main.MainActivity
 import com.fisecode.absentapp.views.signin.SignInActivity
 import org.jetbrains.anko.startActivity
@@ -36,6 +37,9 @@ class ProfileFragment : Fragment() {
         binding?.btnSignOut?.setOnClickListener {
             context?.startActivity<SignInActivity>()
             (activity as MainActivity).finishAffinity()
+        }
+        binding?.btnEmployeeDetails?.setOnClickListener {
+            context?.startActivity<EmployeeDetailActivity>()
         }
     }
 
