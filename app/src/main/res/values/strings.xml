@@ -50,4 +50,14 @@
     <string name="update_profile">Update Profile</string>
     <string name="current_location">Current Location</string>
     <string name="fab_absent_spot">FAB Absent Spot</string>
+    <string name="please_field_your_email">Please field your email!</string>
+    <string name="please_use_valid_email">Please use valid email!</string>
+    <string name="please_field_your_password">Please field your password!</string>
+    <string name="failed">Failed</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="alert">alert</string>
+    <string name="something_wrong">Something Wrong</string>
 </resources>

@@ -15,18 +15,18 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        afterDelayGoToLogin()
+        afterDelayGoToSignIn()
     }
 
-    private fun afterDelayGoToLogin() {
+    private fun afterDelayGoToSignIn() {
         Handler(Looper.getMainLooper()).postDelayed({
             checkIsLogin()
         }, 1200)
     }
 
     private fun checkIsLogin() {
-        val isLogin = HawkStorage.instance(this).isLogin()
-        if (isLogin){
+        val isSignIn = HawkStorage.instance(this).isSignIn()
+        if (isSignIn){
             startActivity<MainActivity>()
             finishAffinity()
         }else{

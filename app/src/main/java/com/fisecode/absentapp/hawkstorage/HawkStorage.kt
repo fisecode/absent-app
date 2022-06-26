@@ -2,6 +2,7 @@ package com.fisecode.absentapp.hawkstorage
 
 import android.content.Context
 import com.fisecode.absentapp.model.Data
+import com.fisecode.absentapp.model.Employee
 import com.fisecode.absentapp.model.User
 import com.orhanobut.hawk.Hawk
 
@@ -9,6 +10,7 @@ class HawkStorage {
     companion object{
         private const val USER_KEY = "user_key"
         private const val TOKEN_KEY = "token_key"
+        private const val EMPLOYEE_KEY = "employee_key"
         private val hawkStorage = HawkStorage()
 
         fun instance(context: Context?): HawkStorage{
@@ -25,6 +27,14 @@ class HawkStorage {
         return Hawk.get(USER_KEY)
     }
 
+    fun setEmployee(employee: Employee){
+        Hawk.put(EMPLOYEE_KEY, employee)
+    }
+
+    fun getEmployee(): Employee{
+        return Hawk.get(EMPLOYEE_KEY)
+    }
+
     fun setToken(accessToken: String){
         Hawk.put(TOKEN_KEY, accessToken)
     }
@@ -35,7 +45,7 @@ class HawkStorage {
         return token[1]
     }
 
-    fun isLogin(): Boolean{
+    fun isSignIn(): Boolean{
         if (Hawk.contains(USER_KEY)){
             return true
         }
