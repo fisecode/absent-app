@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.fisecode.absentapp.R
+import com.fisecode.absentapp.hawkstorage.HawkStorage
+import com.fisecode.absentapp.views.main.MainActivity
 import com.fisecode.absentapp.views.signin.SignInActivity
 import org.jetbrains.anko.startActivity
 
@@ -18,8 +20,18 @@ class SplashActivity : AppCompatActivity() {
 
     private fun afterDelayGoToLogin() {
         Handler(Looper.getMainLooper()).postDelayed({
+            checkIsLogin()
+        }, 1200)
+    }
+
+    private fun checkIsLogin() {
+        val isLogin = HawkStorage.instance(this).isLogin()
+        if (isLogin){
+            startActivity<MainActivity>()
+            finishAffinity()
+        }else{
             startActivity<SignInActivity>()
             finishAffinity()
-        }, 1200)
+        }
     }
 }
