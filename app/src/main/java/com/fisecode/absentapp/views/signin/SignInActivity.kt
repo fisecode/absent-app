@@ -9,6 +9,7 @@ import com.fisecode.absentapp.databinding.ActivitySigninBinding
 import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
 import com.fisecode.absentapp.model.SignInResponse
+import com.fisecode.absentapp.model.Wrapper
 import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.views.forgotpassword.ForgotPasswordActivity
@@ -55,10 +56,10 @@ class SignInActivity : AppCompatActivity() {
 
         ApiServices.getAbsentServices()
             .signInRequest(signInRequestString)
-            .enqueue(object : Callback<SignInResponse> {
+            .enqueue(object : Callback<Wrapper<SignInResponse>> {
                 override fun onResponse(
-                    call: Call<SignInResponse>,
-                    response: Response<SignInResponse>
+                    call: Call<Wrapper<SignInResponse>>,
+                    response: Response<Wrapper<SignInResponse>>
                 ) {
                     MyDialog.hideDialog()
                     if (response.isSuccessful){
@@ -72,14 +73,14 @@ class SignInActivity : AppCompatActivity() {
                             goToMain()
                         }
                     }else{
-                        val errorCoverter: Converter<ResponseBody, SignInResponse> =
+                        val errorCoverter: Converter<ResponseBody, Wrapper<SignInResponse>> =
                             RetrofitClient
                                 .getClient()
                                 .responseBodyConverter(
                                     SignInResponse::class.java,
                                     arrayOfNulls<Annotation>(0)
                                 )
-                        var errorResponse: SignInResponse?
+                        var errorResponse: Wrapper<SignInResponse>?
                         try {
                             response.errorBody()?.let {
                                 errorResponse = errorCoverter.convert(it)
@@ -95,7 +96,7 @@ class SignInActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<SignInResponse>, t: Throwable) {
+                override fun onFailure(call: Call<Wrapper<SignInResponse>>, t: Throwable) {
                     MyDialog.hideDialog()
                     Log.e(TAG, "Error: ${t.message}")
                 }

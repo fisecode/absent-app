@@ -2,6 +2,7 @@ package com.fisecode.absentapp.networking
 
 import com.fisecode.absentapp.model.SignInResponse
 import com.fisecode.absentapp.model.SignOutResponse
+import com.fisecode.absentapp.model.Wrapper
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -12,7 +13,7 @@ interface AbsentApiServices {
 
     @Headers("Accept: application/json", "Content-Type: application/json")
     @POST("login")
-    fun signInRequest(@Body body: String): Call<SignInResponse>
+    fun signInRequest(@Body body: String): Call<Wrapper<SignInResponse>>
 
     @Headers("Accept: application/json", "Content-Type: application/json")
     @POST("logout")

@@ -1,7 +1,6 @@
 package com.fisecode.absentapp.hawkstorage
 
 import android.content.Context
-import com.fisecode.absentapp.model.Data
 import com.fisecode.absentapp.model.Employee
 import com.fisecode.absentapp.model.User
 import com.orhanobut.hawk.Hawk
