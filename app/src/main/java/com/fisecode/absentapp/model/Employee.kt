@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Employee(
 
+    @field:SerializedName("work_to")
+    val workTo: String? = null,
+
     @field:SerializedName("work_from")
     val workFrom: String? = null,
 
