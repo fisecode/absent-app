@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class SignInResponse(
 
-	val aa: Nothing? = null,
-
 	@field:SerializedName("access_token")
 	val accessToken: String? = null,
 
