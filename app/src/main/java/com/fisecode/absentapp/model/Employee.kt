@@ -5,9 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 data class Employee(
 
-    @field:SerializedName("work_to")
-    val workTo: String? = null,
-
     @field:SerializedName("work_from")
     val workFrom: String? = null,
 
@@ -51,5 +48,8 @@ data class Employee(
     val email: String? = null,
 
     @field:SerializedName("doj")
-    val doj: String? = null
+    val doj: String? = null,
+
+    @field:SerializedName("user")
+    val user: User? = null,
 )

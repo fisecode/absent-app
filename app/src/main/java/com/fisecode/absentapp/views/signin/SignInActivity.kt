@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import com.fisecode.absentapp.BuildConfig
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivitySigninBinding
 import com.fisecode.absentapp.dialog.MyDialog
