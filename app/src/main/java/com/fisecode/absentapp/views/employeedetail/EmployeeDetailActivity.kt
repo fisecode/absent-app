@@ -1,24 +1,42 @@
 package com.fisecode.absentapp.views.employeedetail
 
+import android.app.Activity
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.fisecode.absentapp.BuildConfig
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityEmployeeDetailBinding
+import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
+import com.fisecode.absentapp.model.Wrapper
+import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.utils.Helpers
 import com.fisecode.absentapp.utils.Helpers.formatTo
-import com.fisecode.absentapp.utils.Helpers.getDateForServer
 import com.fisecode.absentapp.utils.Helpers.toDate
-import com.fisecode.absentapp.utils.Helpers.toDateForServer
-import com.fisecode.absentapp.views.leave.LeaveRequestActivity
+import com.fisecode.absentapp.views.signin.SignInActivity
+import com.github.dhaval2404.imagepicker.ImagePicker
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.jetbrains.anko.startActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
 class EmployeeDetailActivity : AppCompatActivity() {
 
     private var binding: ActivityEmployeeDetailBinding? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +46,28 @@ class EmployeeDetailActivity : AppCompatActivity() {
         init()
         onClick()
     }
+
+    private val startForProfileImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+            val data = result.data
+
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    //Image Uri will not be null for RESULT_OK
+                    val fileUri = data?.data!!
+
+                    Glide.with(this).load(fileUri).placeholder(R.drawable.employee_photo).into(binding!!.ivEmployeePhoto)
+                    updatePhoto(fileUri)
+                }
+                ImagePicker.RESULT_ERROR -> {
+                    Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
     private fun updateView() {
         val user = HawkStorage.instance(this).getUser()
@@ -45,12 +85,50 @@ class EmployeeDetailActivity : AppCompatActivity() {
         binding?.tvDivision?.text = employee.division
     }
 
+    private fun updatePhoto(photoPath: Uri) {
+        val token = HawkStorage.instance(this).getToken()
+        val file = File(photoPath.path.toString())
+        val photoRequestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+        val multipartBody = MultipartBody.Part.createFormData("photo", file.name, photoRequestBody)
+
+        MyDialog.showProgressDialog(this)
+        ApiServices.getAbsentServices()
+            .updatePhoto("Bearer $token", multipartBody)
+            .enqueue(object : Callback<Wrapper<Any>>{
+                override fun onResponse(
+                    call: Call<Wrapper<Any>>,
+                    response: Response<Wrapper<Any>>
+                ) {
+                    MyDialog.hideDialog()
+                    if (response.isSuccessful){
+                        Toast.makeText(this@EmployeeDetailActivity, "Change Photo Successfully.", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this@EmployeeDetailActivity, "Change Photo Fails.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Wrapper<Any>>, t: Throwable) {
+                    MyDialog.hideDialog()
+                    Log.e(TAG, "Error: ${t.message}")
+                }
+
+            })
+    }
+
+
     private fun onClick() {
         binding?.tbEmployeeDetail?.setNavigationOnClickListener {
             finish()
         }
         binding?.tvChangePhoto?.setOnClickListener {
-            Toast.makeText(this,"CHANGE PHOTO", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this,"CHANGE PHOTO", Toast.LENGTH_SHORT).show()
+            ImagePicker.with(this)
+                .cropSquare()	    			//Crop image(Optional), Check Customization for more option
+                .compress(1024)			//Final image size will be less than 1 MB(Optional)
+                .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .createIntent { intent ->
+                    startForProfileImageResult.launch(intent)
+                }
         }
         binding?.btnEditProfile?.setOnClickListener {
             startActivity<EditProfileActivity>()
@@ -63,5 +141,9 @@ class EmployeeDetailActivity : AppCompatActivity() {
         setSupportActionBar(binding?.tbEmployeeDetail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         updateView()
+    }
+
+    companion object{
+        private val TAG = EmployeeDetailActivity::class.java.simpleName
     }
 }

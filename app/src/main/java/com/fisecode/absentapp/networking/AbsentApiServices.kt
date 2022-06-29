@@ -1,6 +1,7 @@
 package com.fisecode.absentapp.networking
 
 import com.fisecode.absentapp.model.*
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -25,4 +26,11 @@ interface AbsentApiServices {
     fun updateProfile(@Header("Authorization") token: String,
                       @PartMap params: HashMap<String, RequestBody>
     ): Call<Wrapper<UpdateProfileResponse>>
+
+    @Multipart
+    @Headers("Accept: application/json")
+    @POST("user")
+    fun updatePhoto(@Header("Authorization") token: String,
+                      @Part photo: MultipartBody.Part
+    ): Call<Wrapper<Any>>
 }
