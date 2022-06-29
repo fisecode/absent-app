@@ -16,10 +16,10 @@ object Helpers {
         return parser.parse(this)
     }
 
-    fun String.toDateForServer(dateFormat: String = "dd MMM yyyy", timeZone: TimeZone = TimeZone.getDefault()): Date? {
+    fun String.toDateForServer(dateFormat: String = "dd MMM yyyy", timeZone: TimeZone = TimeZone.getDefault()): Date {
         val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
         parser.timeZone = timeZone
-        return parser.parse(this)
+        return parser.parse(this)!!
     }
 
     fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {

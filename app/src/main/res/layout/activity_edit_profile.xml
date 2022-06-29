@@ -208,7 +208,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/color_primary_dark"
-                    android:inputType="textMultiLine"
+                    android:inputType="text"
                     android:lines="3"
                     android:maxLines="3"
                     android:gravity="top"
@@ -267,6 +267,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btn_update_profile"
                 style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

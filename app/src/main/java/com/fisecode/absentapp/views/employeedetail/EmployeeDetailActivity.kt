@@ -38,7 +38,6 @@ class EmployeeDetailActivity : AppCompatActivity() {
         binding?.tvFullName?.text = user.name
         binding?.tvEmployeeId?.text = Helpers.employeeIdFormat(employee.employeeId)
         binding?.tvEmail?.text = employee.email
-//        dob?.toDateForServer()?.formatTo("yyyy-MM-dd")
         binding?.tvDob?.text = employee.dob?.toDate()?.formatTo("dd MMM yyyy")
         binding?.tvGender?.text = employee.gender
         binding?.tvAddress?.text = employee.address

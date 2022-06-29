@@ -1,9 +1,7 @@
 package com.fisecode.absentapp.networking
 
-import com.fisecode.absentapp.model.GetUserResponse
-import com.fisecode.absentapp.model.SignInResponse
-import com.fisecode.absentapp.model.SignOutResponse
-import com.fisecode.absentapp.model.Wrapper
+import com.fisecode.absentapp.model.*
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -21,4 +19,9 @@ interface AbsentApiServices {
     @GET("user")
     fun getUser(@Header("Authorization") token: String) :Call<Wrapper<GetUserResponse>>
 
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @POST("user")
+    fun updateProfile(@Header("Authorization") token: String,
+                      @PartMap params: HashMap<String, RequestBody>
+    ): Call<Wrapper<UpdateProfileResponse>>
 }

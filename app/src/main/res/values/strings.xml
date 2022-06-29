@@ -60,4 +60,5 @@
     <string name="no">No</string>
     <string name="alert">alert</string>
     <string name="something_wrong">Something Wrong</string>
+    <string name="please_field_your_fullname">Please field your fullname!</string>
 </resources>
