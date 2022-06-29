@@ -33,4 +33,8 @@ interface AbsentApiServices {
     fun updatePhoto(@Header("Authorization") token: String,
                       @Part photo: MultipartBody.Part
     ): Call<Wrapper<UploadPhotoResponse>>
+
+    @Headers ("Accept: application/json")
+    @GET("leave")
+    fun leaveType(@Header("Authorization") token: String) :Call<Wrapper<LeaveTypeResponse>>
 }
