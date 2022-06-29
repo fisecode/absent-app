@@ -66,6 +66,7 @@ class EditProfileActivity : AppCompatActivity() {
     private fun onClick() {
         binding.tbEditProfile.setNavigationOnClickListener {
             finish()
+            startActivity<EmployeeDetailActivity>()
         }
         binding.tgGender.addOnButtonCheckedListener{ _, checkedId, isChecked ->
            if (isChecked){
@@ -97,15 +98,7 @@ class EditProfileActivity : AppCompatActivity() {
             val name = binding.etFullName.text.toString()
             val email = binding.etEmail.text.toString()
             if (isFormValid(name, email)){
-                AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.update_profile))
-                    .setMessage(getString(R.string.are_you_sure))
-                    .setPositiveButton(getString(R.string.yes)){dialog, _ ->
-                        updateProfile(token, dialog)
-                    }
-                    .setNegativeButton(getString(R.string.no)){dialog, _ ->
-                        dialog.dismiss()
-                    }
+                updateProfile(token)
             }
         }
     }
@@ -129,7 +122,7 @@ class EditProfileActivity : AppCompatActivity() {
         return false
     }
 
-    private fun updateProfile(token: String, dialog: DialogInterface?) {
+    private fun updateProfile(token: String) {
         val params = HashMap<String, RequestBody>()
         MyDialog.showProgressDialog(this)
         val name = binding.etFullName.text.toString()
@@ -162,40 +155,21 @@ class EditProfileActivity : AppCompatActivity() {
                     call: Call<Wrapper<UpdateProfileResponse>>,
                     response: Response<Wrapper<UpdateProfileResponse>>
                 ) {
-                    dialog?.dismiss()
                     MyDialog.hideDialog()
                     if (response.isSuccessful){
+                        val updateProfileResponse = response.body()
                         val user = response.body()?.data?.employee?.get(0)?.user
                         val employee = response.body()?.data?.employee?.first()
                         if (user != null && employee != null){
                             HawkStorage.instance(this@EditProfileActivity).setUser(user)
                             HawkStorage.instance(this@EditProfileActivity).setEmployee(employee)
-                            startActivity<EmployeeDetailActivity>()
                             finish();
                             onBackPressed();
+                            startActivity<EmployeeDetailActivity>()
                             Toast.makeText(this@EditProfileActivity, "Update Profile Successfully.", Toast.LENGTH_SHORT).show()
                         }
                     }else{
-                        val errorCoverter: Converter<ResponseBody, Wrapper<UpdateProfileResponse>> =
-                            RetrofitClient
-                                .getClient()
-                                .responseBodyConverter(
-                                    EditProfileActivity::class.java,
-                                    arrayOfNulls<Annotation>(0)
-                                )
-                        var errorResponse: Wrapper<UpdateProfileResponse>?
-                        try {
-                            response.errorBody()?.let {
-                                errorResponse = errorCoverter.convert(it)
-                                MyDialog.dynamicDialog(this@EditProfileActivity,
-                                    getString(R.string.failed),
-                                    errorResponse?.meta?.message.toString()
-                                )
-                            }
-                        }catch (e: IOException){
-                            e.printStackTrace()
-                            Log.e(TAG, "Error: ${e.message}")
-                        }
+                        MyDialog.dynamicDialog(this@EditProfileActivity, getString(R.string.alert), getString(R.string.something_wrong))
                     }
                 }
 

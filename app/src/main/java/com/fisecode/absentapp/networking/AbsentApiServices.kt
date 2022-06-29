@@ -19,7 +19,8 @@ interface AbsentApiServices {
     @GET("user")
     fun getUser(@Header("Authorization") token: String) :Call<Wrapper<GetUserResponse>>
 
-    @Headers("Accept: application/json", "Content-Type: application/json")
+    @Multipart
+    @Headers("Accept: application/json")
     @POST("user")
     fun updateProfile(@Header("Authorization") token: String,
                       @PartMap params: HashMap<String, RequestBody>

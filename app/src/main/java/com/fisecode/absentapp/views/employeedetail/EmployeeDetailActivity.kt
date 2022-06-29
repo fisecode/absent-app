@@ -27,7 +27,6 @@ class EmployeeDetailActivity : AppCompatActivity() {
 
         init()
         onClick()
-        updateView()
     }
 
     private fun updateView() {
@@ -55,6 +54,7 @@ class EmployeeDetailActivity : AppCompatActivity() {
         }
         binding?.btnEditProfile?.setOnClickListener {
             startActivity<EditProfileActivity>()
+            finish()
         }
 
     }
@@ -62,5 +62,6 @@ class EmployeeDetailActivity : AppCompatActivity() {
     private fun init() {
         setSupportActionBar(binding?.tbEmployeeDetail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        updateView()
     }
 }
