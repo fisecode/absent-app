@@ -29,8 +29,8 @@ interface AbsentApiServices {
 
     @Multipart
     @Headers("Accept: application/json")
-    @POST("user")
+    @POST("user/photo")
     fun updatePhoto(@Header("Authorization") token: String,
                       @Part photo: MultipartBody.Part
-    ): Call<Wrapper<Any>>
+    ): Call<Wrapper<UploadPhotoResponse>>
 }

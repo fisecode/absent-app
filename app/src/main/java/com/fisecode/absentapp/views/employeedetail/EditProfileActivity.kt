@@ -66,7 +66,6 @@ class EditProfileActivity : AppCompatActivity() {
     private fun onClick() {
         binding.tbEditProfile.setNavigationOnClickListener {
             finish()
-            startActivity<EmployeeDetailActivity>()
         }
         binding.tgGender.addOnButtonCheckedListener{ _, checkedId, isChecked ->
            if (isChecked){
@@ -165,7 +164,6 @@ class EditProfileActivity : AppCompatActivity() {
                             HawkStorage.instance(this@EditProfileActivity).setEmployee(employee)
                             finish();
                             onBackPressed();
-                            startActivity<EmployeeDetailActivity>()
                             Toast.makeText(this@EditProfileActivity, "Update Profile Successfully.", Toast.LENGTH_SHORT).show()
                         }
                     }else{
@@ -178,9 +176,6 @@ class EditProfileActivity : AppCompatActivity() {
                     Log.e(TAG, "Error: ${t.message}")
                 }
             })
-
-
-
 
     }
 

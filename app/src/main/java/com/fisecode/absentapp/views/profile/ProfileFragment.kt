@@ -107,5 +107,10 @@ class ProfileFragment : Fragment() {
         binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateView()
+    }
+
 }
 
