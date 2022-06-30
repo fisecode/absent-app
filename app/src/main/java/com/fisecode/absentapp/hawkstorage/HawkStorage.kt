@@ -36,11 +36,11 @@ class HawkStorage {
         return Hawk.get(EMPLOYEE_KEY)
     }
 
-    fun setLeaveType(leaveType: List<LeaveType>){
+    fun setLeaveType(leaveType: List<LeaveType>?){
         Hawk.put(LEAVETYPE_KEY, leaveType)
     }
 
-    fun getLeaveType(): List<LeaveType>{
+    fun getLeaveType(): List<LeaveType>?{
         return Hawk.get(LEAVETYPE_KEY)
     }
 

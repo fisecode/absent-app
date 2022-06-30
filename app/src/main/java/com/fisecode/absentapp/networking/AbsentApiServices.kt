@@ -39,9 +39,9 @@ interface AbsentApiServices {
     fun leaveType(@Header("Authorization") token: String) :Call<Wrapper<LeaveTypeResponse>>
 
     @Multipart
-    @Headers("Accept: application/json", "Content-Type: application/json")
+    @Headers("Accept: application/json")
     @POST("leave")
     fun leave(@Header("Authorization") token: String,
                       @PartMap params: HashMap<String, RequestBody>
-    ): Call<Wrapper<Leave>>
+    ): Call<Wrapper<LeaveResponse>>
 }

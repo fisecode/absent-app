@@ -9,10 +9,7 @@ import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityLeaveRequestBinding
 import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
-import com.fisecode.absentapp.model.Leave
-import com.fisecode.absentapp.model.LeaveTypeResponse
-import com.fisecode.absentapp.model.UpdateProfileResponse
-import com.fisecode.absentapp.model.Wrapper
+import com.fisecode.absentapp.model.*
 import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.utils.Helpers.formatTo
@@ -56,7 +53,7 @@ class LeaveRequestActivity : AppCompatActivity() {
         binding.btnCalendar.setOnClickListener {
             dateRangePicker.show(supportFragmentManager, dateRangePicker.toString())
             dateRangePicker.addOnPositiveButtonClickListener {
-                val strFormatDefault = "dd MMMM yyyy"
+                val strFormatDefault = "dd MMM yyyy"
                 val simpleDateFormat = SimpleDateFormat(strFormatDefault, Locale.getDefault())
                 val startDate = dateRangePicker.selection?.first
                 val endDate = dateRangePicker.selection?.second
@@ -67,12 +64,12 @@ class LeaveRequestActivity : AppCompatActivity() {
 
         binding.btnSubmit.setOnClickListener {
             val token = HawkStorage.instance(this).getToken()
-            val startDate = binding.etStartDate.text.toString().toDateForServer().formatTo("yyyy-MM-dd")
-            val endDate = binding.etEndDate.text.toString().toDateForServer().formatTo("yyyy-MM-dd")
+            val startDate = binding.etStartDate.text.toString()
+            val endDate = binding.etEndDate.text.toString()
             val reason = binding.etReason.text.toString()
             val leaveTypeName = binding.autoCompleteTextView.text.toString()
             val leaveType = HawkStorage.instance(this).getLeaveType()
-            for (i in leaveType.indices) {
+            for (i in leaveType?.indices!!) {
                 if (leaveType[i].name == leaveTypeName){
                     leaveTypeId = leaveType[i].id.toString()
                 }
@@ -80,8 +77,6 @@ class LeaveRequestActivity : AppCompatActivity() {
             if (isFormValid(leaveTypeName, startDate, endDate, reason)){
                 leave(token, leaveTypeId, startDate, endDate, reason)
             }
-
-            Toast.makeText(this, leaveTypeId, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -98,8 +93,8 @@ class LeaveRequestActivity : AppCompatActivity() {
         val mediaTypeText = MultipartBody.FORM
 
         val requestLeaveTypeId = leaveTypeId.toRequestBody(mediaTypeText)
-        val requestStartDate = startDate.toRequestBody(mediaTypeText)
-        val requestEndDate = endDate.toRequestBody(mediaTypeText)
+        val requestStartDate = startDate.toDateForServer().formatTo("yyyy-MM-dd").toRequestBody(mediaTypeText)
+        val requestEndDate = endDate.toDateForServer().formatTo("yyyy-MM-dd").toRequestBody(mediaTypeText)
         val requestReason = reason.toRequestBody(mediaTypeText)
 
         params["leave_type_id"] = requestLeaveTypeId
@@ -109,20 +104,23 @@ class LeaveRequestActivity : AppCompatActivity() {
 
         ApiServices.getAbsentServices()
             .leave("Bearer $token", params)
-            .enqueue(object : Callback<Wrapper<Leave>>{
+            .enqueue(object : Callback<Wrapper<LeaveResponse>>{
                 override fun onResponse(
-                    call: Call<Wrapper<Leave>>,
-                    response: Response<Wrapper<Leave>>
+                    call: Call<Wrapper<LeaveResponse>>,
+                    response: Response<Wrapper<LeaveResponse>>
                 ) {
                     MyDialog.hideDialog()
                     if (response.isSuccessful){
-                        MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.success), getString(R.string.something_wrong))
+                        val message = response.body()?.meta?.message
+                        if (message != null) {
+                            MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.success), message)
+                        }
                     }else{
                         MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.alert), getString(R.string.something_wrong))
                     }
                 }
 
-                override fun onFailure(call: Call<Wrapper<Leave>>, t: Throwable) {
+                override fun onFailure(call: Call<Wrapper<LeaveResponse>>, t: Throwable) {
                     MyDialog.hideDialog()
                     Log.e(TAG, "Error: ${t.message}")
                 }
@@ -215,7 +213,7 @@ class LeaveRequestActivity : AppCompatActivity() {
 
     private fun initLeaveType() {
         val leaveType = HawkStorage.instance(this).getLeaveType()
-        for (i in leaveType.indices) {
+        for (i in leaveType?.indices!!) {
             listLeaveType.add(leaveType[i].name.toString())
         }
         val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, listLeaveType)
