@@ -11,14 +11,3 @@ data class SignOutResponse(
 	val meta: Meta? = null
 )
 
-data class MetaSignOut(
-
-	@field:SerializedName("code")
-	val code: Int? = null,
-
-	@field:SerializedName("message")
-	val message: String? = null,
-
-	@field:SerializedName("status")
-	val status: String? = null
-)

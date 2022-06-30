@@ -11,7 +11,7 @@ class HawkStorage {
         private const val USER_KEY = "user_key"
         private const val TOKEN_KEY = "token_key"
         private const val EMPLOYEE_KEY = "employee_key"
-        private const val LEAVETYPE_KEY = "employee_key"
+        private const val LEAVETYPE_KEY = "leavetype_key"
         private val hawkStorage = HawkStorage()
 
         fun instance(context: Context?): HawkStorage{
@@ -36,11 +36,11 @@ class HawkStorage {
         return Hawk.get(EMPLOYEE_KEY)
     }
 
-    fun setLeaveType(leaveType: List<LeaveType?>){
+    fun setLeaveType(leaveType: List<LeaveType>){
         Hawk.put(LEAVETYPE_KEY, leaveType)
     }
 
-    fun getLeaveType(): List<LeaveType?>{
+    fun getLeaveType(): List<LeaveType>{
         return Hawk.get(LEAVETYPE_KEY)
     }
 

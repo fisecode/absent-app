@@ -35,6 +35,13 @@ interface AbsentApiServices {
     ): Call<Wrapper<UploadPhotoResponse>>
 
     @Headers ("Accept: application/json")
-    @GET("leave")
+    @GET("leave/types")
     fun leaveType(@Header("Authorization") token: String) :Call<Wrapper<LeaveTypeResponse>>
+
+    @Multipart
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @POST("leave")
+    fun leave(@Header("Authorization") token: String,
+                      @PartMap params: HashMap<String, RequestBody>
+    ): Call<Wrapper<Leave>>
 }

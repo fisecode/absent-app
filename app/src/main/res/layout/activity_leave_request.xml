@@ -149,6 +149,8 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btn_submit"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -161,7 +163,6 @@
                 android:text="@string/submit"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                style="@style/Widget.Material3.Button.ElevatedButton"
                 app:backgroundTint="@color/color_primary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
