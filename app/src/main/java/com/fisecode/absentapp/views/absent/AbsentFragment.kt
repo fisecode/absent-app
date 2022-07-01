@@ -45,9 +45,13 @@ class AbsentFragment : Fragment() {
         onClick()
     }
 
-    private fun init() {
+    override fun onResume() {
+        super.onResume()
         getUserData()
-        updateView()
+    }
+
+    private fun init() {
+        //
     }
 
     private fun getUserData() {
@@ -67,6 +71,7 @@ class AbsentFragment : Fragment() {
                         if (user != null && employee != null){
                             HawkStorage.instance(context).setUser(user)
                             HawkStorage.instance(context).setEmployee(employee)
+                            updateView()
                         }
                     }else{
                         val errorConverter: Converter<ResponseBody, Wrapper<GetUserResponse>> =

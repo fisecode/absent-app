@@ -46,12 +46,12 @@ class HawkStorage {
         return Hawk.get(LEAVETYPE_KEY)
     }
 
-    fun setLeaveHistory(leaveHistory: List<LeaveHistory?>){
-        Hawk.put(LEAVETYPE_KEY, leaveHistory)
+    fun setLeaveHistory(leaveHistory: List<LeaveHistory>?){
+        Hawk.put(LEAVEHISTORY_KEY, leaveHistory)
     }
 
-    fun getLeaveHistory(): List<LeaveHistory?>{
-        return Hawk.get(LEAVETYPE_KEY)
+    fun getLeaveHistory(): List<LeaveHistory>?{
+        return Hawk.get(LEAVEHISTORY_KEY)
     }
 
 

@@ -37,7 +37,6 @@ class LeaveFragment : Fragment() {
     ): View? {
         binding = FragmentLeaveBinding.inflate(layoutInflater)
         return binding?.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,16 +44,13 @@ class LeaveFragment : Fragment() {
         init()
     }
 
-    private fun init() {
+    override fun onResume() {
+        super.onResume()
         getLeaveHistory()
-        onClick()
+    }
 
-        val leaveHistory = HawkStorage.instance(context).getLeaveHistory()
-        val adapter = LeaveAdapter(leaveHistory)
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding?.rcListLeave?.layoutManager = layoutManager
-        binding?.rcListLeave?.adapter = adapter
-        adapter.notifyDataSetChanged()
+    private fun init() {
+        onClick()
     }
 
     private fun onClick() {
@@ -71,6 +67,14 @@ class LeaveFragment : Fragment() {
 //        leaveList.add(LeaveModel("Approved", "30 Jun 2022", "4 Jul 2022", 3, "Annual Leave", "Liburan", false))
 //    }
 
+    private fun initLeaveHistory(){
+        val leaveHistory = HawkStorage.instance(context).getLeaveHistory()
+        val adapter = LeaveAdapter(leaveHistory)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding?.rcListLeave?.layoutManager = layoutManager
+        binding?.rcListLeave?.adapter = adapter
+        adapter.notifyDataSetChanged()
+    }
     private fun getLeaveHistory(){
         val token = HawkStorage.instance(context).getToken()
         MyDialog.showProgressDialog(context)
@@ -86,6 +90,7 @@ class LeaveFragment : Fragment() {
                         val leaveHistory = response.body()?.data?.leaveHistory
                         if (leaveHistory != null){
                             HawkStorage.instance(context).setLeaveHistory(leaveHistory)
+                            initLeaveHistory()
                         }
                     }else {
                         val errorConverter: Converter<ResponseBody, Wrapper<LeaveHistoryResponse>> =

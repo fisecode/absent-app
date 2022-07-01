@@ -48,7 +48,7 @@ class LeaveRequestActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        initLeaveType()
+//        initLeaveType()
     }
 
     private fun onClick() {
@@ -167,7 +167,7 @@ class LeaveRequestActivity : AppCompatActivity() {
         setSupportActionBar(binding.tbLeaveRequest)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         getLeaveType()
-        initLeaveType()
+//        initLeaveType()
     }
 
     private fun getLeaveType() {
