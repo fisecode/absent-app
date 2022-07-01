@@ -46,6 +46,11 @@ class LeaveRequestActivity : AppCompatActivity() {
         onClick()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initLeaveType()
+    }
+
     private fun onClick() {
         binding.tbLeaveRequest.setNavigationOnClickListener {
             finish()
@@ -180,6 +185,7 @@ class LeaveRequestActivity : AppCompatActivity() {
                         val leaveType = response.body()?.data?.leaveType
                         if (leaveType != null){
                             HawkStorage.instance(this@LeaveRequestActivity).setLeaveType(leaveType)
+                            initLeaveType()
                         }
                     }else{
                         val errorConverter: Converter<ResponseBody, Wrapper<LeaveTypeResponse>> =

@@ -44,4 +44,8 @@ interface AbsentApiServices {
     fun leave(@Header("Authorization") token: String,
                       @PartMap params: HashMap<String, RequestBody>
     ): Call<Wrapper<LeaveResponse>>
+
+    @Headers ("Accept: application/json")
+    @GET("leave/history")
+    fun leaveHistory(@Header("Authorization") token: String) :Call<Wrapper<LeaveHistoryResponse>>
 }

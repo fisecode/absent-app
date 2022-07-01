@@ -186,7 +186,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
             <TextView
-                android:id="@+id/tv_date_start"
+                android:id="@+id/tv_start_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -197,15 +197,15 @@
                 app:layout_constraintTop_toTopOf="@+id/textView" />
 
             <TextView
-                android:id="@+id/tv_date_end"
+                android:id="@+id/tv_end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/default_text"
                 android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@+id/tv_date_start"
-                app:layout_constraintTop_toBottomOf="@+id/tv_date_start" />
+                app:layout_constraintStart_toStartOf="@+id/tv_start_date"
+                app:layout_constraintTop_toBottomOf="@+id/tv_start_date" />
 
             <TextView
                 android:id="@+id/tv_total_days"
@@ -215,8 +215,8 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/default_text"
                 android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@+id/tv_date_end"
-                app:layout_constraintTop_toBottomOf="@+id/tv_date_end" />
+                app:layout_constraintStart_toStartOf="@+id/tv_end_date"
+                app:layout_constraintTop_toBottomOf="@+id/tv_end_date" />
 
             <TextView
                 android:id="@+id/tv_leave_type"

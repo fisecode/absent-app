@@ -2,6 +2,7 @@ package com.fisecode.absentapp.hawkstorage
 
 import android.content.Context
 import com.fisecode.absentapp.model.Employee
+import com.fisecode.absentapp.model.LeaveHistory
 import com.fisecode.absentapp.model.LeaveType
 import com.fisecode.absentapp.model.User
 import com.orhanobut.hawk.Hawk
@@ -12,6 +13,7 @@ class HawkStorage {
         private const val TOKEN_KEY = "token_key"
         private const val EMPLOYEE_KEY = "employee_key"
         private const val LEAVETYPE_KEY = "leavetype_key"
+        private const val LEAVEHISTORY_KEY = "leavehistory_key"
         private val hawkStorage = HawkStorage()
 
         fun instance(context: Context?): HawkStorage{
@@ -41,6 +43,14 @@ class HawkStorage {
     }
 
     fun getLeaveType(): List<LeaveType>?{
+        return Hawk.get(LEAVETYPE_KEY)
+    }
+
+    fun setLeaveHistory(leaveHistory: List<LeaveHistory?>){
+        Hawk.put(LEAVETYPE_KEY, leaveHistory)
+    }
+
+    fun getLeaveHistory(): List<LeaveHistory?>{
         return Hawk.get(LEAVETYPE_KEY)
     }
 
