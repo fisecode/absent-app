@@ -14,6 +14,10 @@ data class SignInResponse(
 	val employee: Employee? = null,
 
 	@field:SerializedName("user")
-	val user: User? = null
+	val user: User? = null,
+
+	@field:SerializedName("message")
+	val message: String? = null
+
 )
 

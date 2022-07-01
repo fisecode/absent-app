@@ -1,10 +1,7 @@
 package com.fisecode.absentapp.hawkstorage
 
 import android.content.Context
-import com.fisecode.absentapp.model.Employee
-import com.fisecode.absentapp.model.LeaveHistory
-import com.fisecode.absentapp.model.LeaveType
-import com.fisecode.absentapp.model.User
+import com.fisecode.absentapp.model.*
 import com.orhanobut.hawk.Hawk
 
 class HawkStorage {
@@ -14,6 +11,7 @@ class HawkStorage {
         private const val EMPLOYEE_KEY = "employee_key"
         private const val LEAVETYPE_KEY = "leavetype_key"
         private const val LEAVEHISTORY_KEY = "leavehistory_key"
+        private const val ABSENTSPOT_KEY = "absentspot_key"
         private val hawkStorage = HawkStorage()
 
         fun instance(context: Context?): HawkStorage{
@@ -54,6 +52,13 @@ class HawkStorage {
         return Hawk.get(LEAVEHISTORY_KEY)
     }
 
+    fun setAbsentSpot(absentSpot: AbsentSpot){
+        Hawk.put(ABSENTSPOT_KEY, absentSpot)
+    }
+
+    fun getAbsentSpot(): List<LeaveHistory>?{
+        return Hawk.get(ABSENTSPOT_KEY)
+    }
 
     fun setToken(accessToken: String){
         Hawk.put(TOKEN_KEY, accessToken)

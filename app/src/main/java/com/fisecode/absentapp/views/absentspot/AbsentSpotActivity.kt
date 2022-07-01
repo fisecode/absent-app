@@ -2,6 +2,7 @@ package com.fisecode.absentapp.views.absentspot
 
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Geocoder
@@ -19,6 +20,15 @@ import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityAbsentSpotBinding
 import com.fisecode.absentapp.databinding.BottomSheetAbsentSpotBinding
 import com.fisecode.absentapp.dialog.MyDialog
+import com.fisecode.absentapp.hawkstorage.HawkStorage
+import com.fisecode.absentapp.model.AbsentSpotResponse
+import com.fisecode.absentapp.model.AbsentSpot
+import com.fisecode.absentapp.model.SignInResponse
+import com.fisecode.absentapp.model.Wrapper
+import com.fisecode.absentapp.networking.ApiServices
+import com.fisecode.absentapp.networking.RetrofitClient
+import com.fisecode.absentapp.views.employeedetail.EditProfileActivity
+import com.fisecode.absentapp.views.signin.SignInActivity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -30,6 +40,15 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Converter
+import retrofit2.Response
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import com.google.android.gms.location.LocationCallback as LocationCallback1
@@ -37,7 +56,7 @@ import com.google.android.gms.location.LocationCallback as LocationCallback1
 
 class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    companion object{
+    companion object {
         private const val REQUEST_CODE_MAP_PERMISSIONS = 1000
         private const val REQUEST_CODE_LOCATION = 2000
         private val TAG = AbsentSpotActivity::class.java.simpleName
@@ -84,23 +103,24 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
+        when (requestCode) {
             REQUEST_CODE_MAP_PERMISSIONS -> {
                 var isHasPermission = false
                 val permissionNotGranted = StringBuilder()
 
-                for (i in permissions.indices){
+                for (i in permissions.indices) {
                     isHasPermission = grantResults[i] == PackageManager.PERMISSION_GRANTED
 
-                    if (!isHasPermission){
+                    if (!isHasPermission) {
                         permissionNotGranted.append("${permissions[i]}\n")
                     }
                 }
 
-                if (isHasPermission){
+                if (isHasPermission) {
                     setupMaps()
-                }else{
-                    val message = permissionNotGranted.toString() + "\n" + getString(R.string.not_granted)
+                } else {
+                    val message =
+                        permissionNotGranted.toString() + "\n" + getString(R.string.not_granted)
                     MyDialog.dynamicDialog(this, getString(R.string.required_permission), message)
                 }
             }
@@ -111,21 +131,20 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onDestroy()
         binding = null
         bindingBottomSheet = null
-        if (currentLocation != null && locationCallBack != null){
-            fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
-        }
+        stopLocationUpdates()
     }
 
     private fun setupMaps() {
-        mapAbsentSpot = supportFragmentManager.findFragmentById(R.id.map_absent_spot) as? SupportMapFragment
+        mapAbsentSpot =
+            supportFragmentManager.findFragmentById(R.id.map_absent_spot) as? SupportMapFragment
         mapAbsentSpot?.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        if (checkPermission()){
+        if (checkPermission()) {
             officeMap()
-        }else{
+        } else {
             setRequestPermission()
         }
 
@@ -134,9 +153,21 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun onClick() {
         binding?.tbAbsentSpot?.setNavigationOnClickListener {
             finish()
-            binding?.fabGetCurrentLocation?.setOnClickListener {
-                goToCurrentLocation()
-            }
+        }
+        binding?.fabGetCurrentLocation?.setOnClickListener {
+            goToCurrentLocation()
+        }
+        bindingBottomSheet?.btnSubmitSpot?.setOnClickListener {
+            val token = HawkStorage.instance(this).getToken()
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.are_you_sure))
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    sendDataAbsentSpot(token)
+                }
+                .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
 
@@ -168,7 +199,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, spotList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner?.setAdapter(adapter)
-        spinner?.setText(adapter.getItem(0).toString(),false)
+        spinner?.setText(adapter.getItem(0).toString(), false)
         bindingBottomSheet?.tvCurrentLocation?.text = spinner?.text
         spinner?.onItemClickListener =
             AdapterView.OnItemClickListener { p0, _, p2, _ ->
@@ -187,7 +218,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    private fun officeMap(){
+    private fun officeMap() {
         bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.location)
         map?.addMarker(
             MarkerOptions()
@@ -202,7 +233,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
             .build()
         map?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         val address = getAddress(latitude, longitude)
-        if (address != null && address.isNotEmpty()){
+        if (address != null && address.isNotEmpty()) {
             bindingBottomSheet?.tvCurrentLocation?.text = address
         }
     }
@@ -210,23 +241,23 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun goToCurrentLocation() {
         bindingBottomSheet?.tvCurrentLocation?.text = getString(R.string.search_your_location)
         bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.current_location)
-        if (checkPermission()){
-            if (isLocationEnabled()){
+        if (checkPermission()) {
+            if (isLocationEnabled()) {
                 map?.isMyLocationEnabled = true
                 map?.uiSettings?.isMyLocationButtonEnabled = false
                 fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-                locationCallBack = object : LocationCallback1(){
+                locationCallBack = object : LocationCallback1() {
                     override fun onLocationResult(locationResult: LocationResult) {
                         super.onLocationResult(locationResult)
                         currentLocation = locationResult.lastLocation
 
-                        if (currentLocation != null){
+                        if (currentLocation != null) {
                             val latitude = currentLocation?.latitude
                             val longitude = currentLocation?.longitude
 
-                            if (latitude != null && longitude != null){
-                                val latLng = LatLng(latitude,longitude)
+                            if (latitude != null && longitude != null) {
+                                val latLng = LatLng(latitude, longitude)
                                 val cameraPosition = CameraPosition.builder()
                                     .target(latLng)
                                     .zoom(20f)
@@ -236,7 +267,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                                 map?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
                                 val address = getAddress(latitude, longitude)
-                                if (address != null && address.isNotEmpty()){
+                                if (address != null && address.isNotEmpty()) {
                                     bindingBottomSheet?.tvCurrentLocation?.text = address
                                 }
                             }
@@ -245,13 +276,13 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 fusedLocationProviderClient?.requestLocationUpdates(
                     locationRequest!!,
-                    locationCallBack as LocationCallback1,
+                    locationCallBack!!,
                     Looper.myLooper()
                 )
-            }else{
+            } else {
                 goToTurnOnGps()
             }
-        }else{
+        } else {
             setRequestPermission()
         }
     }
@@ -262,7 +293,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
             val geocode = Geocoder(it, Locale.getDefault())
             val addresses = geocode.getFromLocation(latitude, longitude, 1)
 
-            if (addresses.size > 0){
+            if (addresses.size > 0) {
                 result = addresses[0].getAddressLine(0)
                 return result
             }
@@ -272,7 +303,8 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun isLocationEnabled(): Boolean {
         if (locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)!! ||
-            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER)!!){
+            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER)!!
+        ) {
             return true
         }
         return false
@@ -282,8 +314,8 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         settingsClient?.checkLocationSettings(locationSettingsRequest!!)
             ?.addOnSuccessListener {
                 goToCurrentLocation()
-            }?.addOnFailureListener{
-                when((it as ApiException).statusCode){
+            }?.addOnFailureListener {
+                when ((it as ApiException).statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                         try {
                             val resolvableApiException = it as ResolvableApiException
@@ -291,7 +323,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                                 this,
                                 REQUEST_CODE_LOCATION
                             )
-                        } catch (ex: IntentSender.SendIntentException){
+                        } catch (ex: IntentSender.SendIntentException) {
                             ex.printStackTrace()
                             Log.e(TAG, "Error: ${ex.message}")
                         }
@@ -303,8 +335,11 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun checkPermission(): Boolean {
         var isHasPermission = false
         this.let {
-            for (permission in mapPermissions){
-                isHasPermission = ActivityCompat.checkSelfPermission(it, permission) == PackageManager.PERMISSION_GRANTED
+            for (permission in mapPermissions) {
+                isHasPermission = ActivityCompat.checkSelfPermission(
+                    it,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
             }
         }
         return isHasPermission
@@ -313,4 +348,88 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setRequestPermission() {
         requestPermissions(mapPermissions, REQUEST_CODE_MAP_PERMISSIONS)
     }
+
+    private fun stopLocationUpdates() {
+        fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
+    }
+
+    private fun sendDataAbsentSpot(token: String) {
+        val params = HashMap<String, RequestBody>()
+        MyDialog.showProgressDialog(this)
+        val nameSpot = bindingBottomSheet?.autoCompleteTextView?.text.toString()
+        val getLatitude: String
+        val getLongitude: String
+        if (nameSpot == "Office") {
+            getLatitude = latitude.toString()
+            getLongitude = longitude.toString()
+        } else {
+            getLatitude = currentLocation?.latitude.toString()
+            getLongitude = currentLocation?.longitude.toString()
+        }
+        val address = bindingBottomSheet?.tvCurrentLocation?.text.toString()
+
+        val mediaTypeText = MultipartBody.FORM
+
+        val requestNameSpot = nameSpot.toRequestBody(mediaTypeText)
+        val requestLatitude = getLatitude.toRequestBody(mediaTypeText)
+        val requestLongitude = getLongitude.toRequestBody(mediaTypeText)
+        val requestAddress = address.toRequestBody(mediaTypeText)
+
+        params["name_spot"] = requestNameSpot
+        params["latitude"] = requestLatitude
+        params["longitude"] = requestLongitude
+        params["address"] = requestAddress
+
+        ApiServices.getAbsentServices()
+            .absentSpot("Bearer $token", params)
+            .enqueue(object : Callback<Wrapper<AbsentSpotResponse>> {
+                override fun onResponse(
+                    call: Call<Wrapper<AbsentSpotResponse>>,
+                    response: Response<Wrapper<AbsentSpotResponse>>
+                ) {
+                    MyDialog.hideDialog()
+                    if (response.isSuccessful) {
+                        val absentSpot = response.body()?.data?.absentSpot
+                        val message = response.body()?.meta?.message
+                        if (absentSpot != null && message != null) {
+                            HawkStorage.instance(this@AbsentSpotActivity).setAbsentSpot(absentSpot)
+                            MyDialog.dynamicDialog(
+                                this@AbsentSpotActivity,
+                                getString(R.string.success),
+                                message
+                            )
+                        }
+                    } else {
+                        val errorConverter: Converter<ResponseBody, Wrapper<AbsentSpotResponse>> =
+                            RetrofitClient
+                                .getClient()
+                                .responseBodyConverter(
+                                    Wrapper::class.java,
+                                    arrayOfNulls<Annotation>(0)
+                                )
+                        var errorResponse: Wrapper<AbsentSpotResponse>?
+                        try {
+                            response.errorBody()?.let {
+                                errorResponse = errorConverter.convert(it)
+                                MyDialog.dynamicDialog(
+                                    this@AbsentSpotActivity,
+                                    getString(R.string.failed),
+                                    errorResponse?.meta?.message.toString()
+                                )
+                            }
+                        }catch (e: IOException){
+                            e.printStackTrace()
+                            Log.e(TAG, "Error: ${e.message}")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Wrapper<AbsentSpotResponse>>, t: Throwable) {
+                    MyDialog.hideDialog()
+                    Log.e(TAG, "Error: ${t.message}")
+                }
+
+            })
+    }
+
 }

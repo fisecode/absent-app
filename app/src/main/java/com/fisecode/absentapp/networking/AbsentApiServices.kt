@@ -48,4 +48,11 @@ interface AbsentApiServices {
     @Headers ("Accept: application/json")
     @GET("leave/history")
     fun leaveHistory(@Header("Authorization") token: String) :Call<Wrapper<LeaveHistoryResponse>>
+
+    @Multipart
+    @Headers("Accept: application/json")
+    @POST("absent/spot")
+    fun absentSpot(@Header("Authorization") token: String,
+                      @PartMap params: HashMap<String, RequestBody>
+    ): Call<Wrapper<AbsentSpotResponse>>
 }

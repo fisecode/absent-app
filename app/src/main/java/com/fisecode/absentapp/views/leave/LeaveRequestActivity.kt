@@ -3,7 +3,6 @@ package com.fisecode.absentapp.views.leave
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityLeaveRequestBinding
@@ -14,7 +13,6 @@ import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.utils.Helpers.formatTo
 import com.fisecode.absentapp.utils.Helpers.toDateForServer
-import com.fisecode.absentapp.views.employeedetail.EditProfileActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

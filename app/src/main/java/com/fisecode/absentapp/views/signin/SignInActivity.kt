@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import com.fisecode.absentapp.BuildConfig
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivitySigninBinding
 import com.fisecode.absentapp.dialog.MyDialog
@@ -74,18 +73,19 @@ class SignInActivity : AppCompatActivity() {
                             goToMain()
                         }
                     }else{
-                        val errorCoverter: Converter<ResponseBody, Wrapper<SignInResponse>> =
+                        val errorConverter: Converter<ResponseBody, Wrapper<SignInResponse>> =
                             RetrofitClient
                                 .getClient()
                                 .responseBodyConverter(
-                                    SignInResponse::class.java,
+                                    Wrapper::class.java,
                                     arrayOfNulls<Annotation>(0)
                                 )
                         var errorResponse: Wrapper<SignInResponse>?
                         try {
                             response.errorBody()?.let {
-                                errorResponse = errorCoverter.convert(it)
-                                MyDialog.dynamicDialog(this@SignInActivity,
+                                errorResponse = errorConverter.convert(it)
+                                MyDialog.dynamicDialog(
+                                    this@SignInActivity,
                                     getString(R.string.failed),
                                     errorResponse?.meta?.message.toString()
                                 )
