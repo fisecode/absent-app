@@ -33,14 +33,15 @@
         android:id="@+id/fab_get_current_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/fab_absent_spot"
+        android:src="@drawable/ic_baseline_location_searching_24"
+        android:translationY="-40dp"
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
         app:layout_anchor="@id/layout_bottom_sheet"
         app:layout_anchorGravity="top|end"
-        app:backgroundTint="@color/white"
-        app:tint="@color/color_primary"
-        android:src="@drawable/ic_baseline_location_searching_24"
-        android:layout_margin="16dp"
-        android:translationY="-40dp"
-        android:contentDescription="@string/fab_absent_spot" />
+        app:tint="@color/color_primary" />
 
     <include
         android:id="@+id/layout_bottom_sheet"

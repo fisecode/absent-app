@@ -1,49 +1,119 @@
 package com.fisecode.absentapp.views.absentspot
 
 
+import android.Manifest
+import android.content.IntentSender
+import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityAbsentSpotBinding
 import com.fisecode.absentapp.databinding.BottomSheetAbsentSpotBinding
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
+import com.fisecode.absentapp.dialog.MyDialog
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import java.util.*
+import kotlin.collections.ArrayList
+import com.google.android.gms.location.LocationCallback as LocationCallback1
+
 
 class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var binding: ActivityAbsentSpotBinding
-    private lateinit var bindingBottomSheet: BottomSheetAbsentSpotBinding
+    companion object{
+        private const val REQUEST_CODE_MAP_PERMISSIONS = 1000
+        private const val REQUEST_CODE_LOCATION = 2000
+        private val TAG = AbsentSpotActivity::class.java.simpleName
+    }
+
+    private val mapPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+    private var binding: ActivityAbsentSpotBinding? = null
+    private var bindingBottomSheet: BottomSheetAbsentSpotBinding? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
+    //Configuration Map
     private var mapAbsentSpot: SupportMapFragment? = null
     private var map: GoogleMap? = null
+    private var locationManager: LocationManager? = null
+    private var locationRequest: LocationRequest? = null
+    private var locationSettingsRequest: LocationSettingsRequest? = null
+    private var settingsClient: SettingsClient? = null
     private var currentLocation: Location? = null
+    private var locationCallBack: LocationCallback1? = null
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+
     private var spotList: ArrayList<String> = ArrayList()
-    private lateinit var locationCallback: LocationCallback
-    var item = ""
-    var latitude = -6.284665797423048
-    var longitude = 106.75063133077147
-    var latLang = LatLng(latitude, longitude)
+    private var latitude = -6.284665797423048
+    private var longitude = 106.75063133077147
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAbsentSpotBinding.inflate(layoutInflater)
-        bindingBottomSheet = binding.layoutBottomSheet
-        setContentView(binding.root)
+        bindingBottomSheet = binding?.layoutBottomSheet
+        setContentView(binding?.root)
 
         setupMaps()
         init()
         onClick()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+            REQUEST_CODE_MAP_PERMISSIONS -> {
+                var isHasPermission = false
+                val permissionNotGranted = StringBuilder()
+
+                for (i in permissions.indices){
+                    isHasPermission = grantResults[i] == PackageManager.PERMISSION_GRANTED
+
+                    if (!isHasPermission){
+                        permissionNotGranted.append("${permissions[i]}\n")
+                    }
+                }
+
+                if (isHasPermission){
+                    setupMaps()
+                }else{
+                    val message = permissionNotGranted.toString() + "\n" + getString(R.string.not_granted)
+                    MyDialog.dynamicDialog(this, getString(R.string.required_permission), message)
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
+        bindingBottomSheet = null
+        if (currentLocation != null && locationCallBack != null){
+            fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
+        }
     }
 
     private fun setupMaps() {
@@ -53,58 +123,194 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map?.addMarker(
-            MarkerOptions()
-                .position(latLang)
-                .title("Marker in Sydney")
-        )
-        map?.moveCamera(CameraUpdateFactory.newLatLng(latLang))
-        map?.animateCamera(CameraUpdateFactory.zoomTo(20f))
+        if (checkPermission()){
+            officeMap()
+        }else{
+            setRequestPermission()
+        }
+
     }
 
     private fun onClick() {
-        binding.tbAbsentSpot.setNavigationOnClickListener {
+        binding?.tbAbsentSpot?.setNavigationOnClickListener {
             finish()
+            binding?.fabGetCurrentLocation?.setOnClickListener {
+                goToCurrentLocation()
+            }
         }
     }
 
     private fun init() {
         //Top Navigation
-        setSupportActionBar(binding.tbAbsentSpot)
+        setSupportActionBar(binding?.tbAbsentSpot)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //Setup BottomSheet
-        bottomSheetBehavior = BottomSheetBehavior.from(bindingBottomSheet.bottomSheetAbsentSpot)
+        bottomSheetBehavior = BottomSheetBehavior.from(bindingBottomSheet!!.bottomSheetAbsentSpot)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+        //Setup Location
+        locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
+        settingsClient = LocationServices.getSettingsClient(this)
+        locationRequest = LocationRequest.create().apply {
+            interval = 10000
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
+
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
+        locationSettingsRequest = builder.build()
+
+        //Setup Spinner
         spotList = ArrayList()
         spotList.add("Office")
         spotList.add("Home")
-
-        val spinner = bindingBottomSheet.autoCompleteTextView
+        val spinner = bindingBottomSheet?.autoCompleteTextView
         val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, spotList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.setAdapter(adapter)
-        spinner.setText(adapter.getItem(0).toString(),false)
-        bindingBottomSheet.tvCurrentLocation.text = spinner.text
-        spinner.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        spinner?.setAdapter(adapter)
+        spinner?.setText(adapter.getItem(0).toString(),false)
+        bindingBottomSheet?.tvCurrentLocation?.text = spinner?.text
+        spinner?.onItemClickListener =
+            AdapterView.OnItemClickListener { p0, _, p2, _ ->
                 if (p2 == 0) {
-                    val latLang = LatLng(latitude, longitude)
-                    map?.moveCamera(CameraUpdateFactory.newLatLng(latLang))
-                    map?.animateCamera(CameraUpdateFactory.zoomTo(20F))
-                    item = p0?.getItemAtPosition(p2).toString()
-                    bindingBottomSheet.tvCurrentLocation.text = item
+                    map?.clear()
+                    map?.isMyLocationEnabled = false
+                    binding?.fabGetCurrentLocation?.visibility = View.GONE
+                    fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
+                    officeMap()
                 } else {
-                    val latitude = -6.289068599951689
-                    val longitude = 106.75762827796194
-                    val newLatLng = LatLng(latitude, longitude)
-                    map?.moveCamera(CameraUpdateFactory.newLatLng(newLatLng))
-                    map?.animateCamera(CameraUpdateFactory.zoomTo(20F))
-                    item = p0?.getItemAtPosition(p2).toString()
-                    bindingBottomSheet.tvCurrentLocation.text = item
+                    map?.clear()
+                    binding?.fabGetCurrentLocation?.visibility = View.VISIBLE
+                    goToCurrentLocation()
                 }
             }
+
+    }
+
+    private fun officeMap(){
+        bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.location)
+        map?.addMarker(
+            MarkerOptions()
+                .position(LatLng(latitude, longitude))
+                .title("Office")
+        )
+        val cameraPosition = CameraPosition.builder()
+            .target(LatLng(latitude, longitude))
+            .zoom(20f)
+            .bearing(0f)
+            .tilt(45f)
+            .build()
+        map?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        val address = getAddress(latitude, longitude)
+        if (address != null && address.isNotEmpty()){
+            bindingBottomSheet?.tvCurrentLocation?.text = address
         }
+    }
+
+    private fun goToCurrentLocation() {
+        bindingBottomSheet?.tvCurrentLocation?.text = getString(R.string.search_your_location)
+        bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.current_location)
+        if (checkPermission()){
+            if (isLocationEnabled()){
+                map?.isMyLocationEnabled = true
+                map?.uiSettings?.isMyLocationButtonEnabled = false
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+                locationCallBack = object : LocationCallback1(){
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        super.onLocationResult(locationResult)
+                        currentLocation = locationResult.lastLocation
+
+                        if (currentLocation != null){
+                            val latitude = currentLocation?.latitude
+                            val longitude = currentLocation?.longitude
+
+                            if (latitude != null && longitude != null){
+                                val latLng = LatLng(latitude,longitude)
+                                val cameraPosition = CameraPosition.builder()
+                                    .target(latLng)
+                                    .zoom(20f)
+                                    .bearing(0f)
+                                    .tilt(45f)
+                                    .build()
+                                map?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+                                val address = getAddress(latitude, longitude)
+                                if (address != null && address.isNotEmpty()){
+                                    bindingBottomSheet?.tvCurrentLocation?.text = address
+                                }
+                            }
+                        }
+                    }
+                }
+                fusedLocationProviderClient?.requestLocationUpdates(
+                    locationRequest!!,
+                    locationCallBack as LocationCallback1,
+                    Looper.myLooper()
+                )
+            }else{
+                goToTurnOnGps()
+            }
+        }else{
+            setRequestPermission()
+        }
+    }
+
+    private fun getAddress(latitude: Double, longitude: Double): String? {
+        val result: String
+        this.let {
+            val geocode = Geocoder(it, Locale.getDefault())
+            val addresses = geocode.getFromLocation(latitude, longitude, 1)
+
+            if (addresses.size > 0){
+                result = addresses[0].getAddressLine(0)
+                return result
+            }
+        }
+        return null
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        if (locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)!! ||
+            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER)!!){
+            return true
+        }
+        return false
+    }
+
+    private fun goToTurnOnGps() {
+        settingsClient?.checkLocationSettings(locationSettingsRequest!!)
+            ?.addOnSuccessListener {
+                goToCurrentLocation()
+            }?.addOnFailureListener{
+                when((it as ApiException).statusCode){
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                        try {
+                            val resolvableApiException = it as ResolvableApiException
+                            resolvableApiException.startResolutionForResult(
+                                this,
+                                REQUEST_CODE_LOCATION
+                            )
+                        } catch (ex: IntentSender.SendIntentException){
+                            ex.printStackTrace()
+                            Log.e(TAG, "Error: ${ex.message}")
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun checkPermission(): Boolean {
+        var isHasPermission = false
+        this.let {
+            for (permission in mapPermissions){
+                isHasPermission = ActivityCompat.checkSelfPermission(it, permission) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+        return isHasPermission
+    }
+
+    private fun setRequestPermission() {
+        requestPermissions(mapPermissions, REQUEST_CODE_MAP_PERMISSIONS)
     }
 }

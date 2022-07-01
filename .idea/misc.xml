@@ -19,12 +19,15 @@
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/ic_baseline_person_40.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/drawable/top_bubble.xml" value="0.2355" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout-sw600dp/activity_signin.xml" value="0.256640625" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_absent_spot.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_change_password.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_forgot_password.xml" value="0.30416666666666664" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_leave_request.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_login.xml" value="0.16510416666666666" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_main.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_signin.xml" value="0.28076923076923077" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/activity_splash.xml" value="0.3242753623188406" />
+        <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/bottom_sheet_absent_spot.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_absent.xml" value="0.25" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_home.xml" value="0.30416666666666664" />
         <entry key="..\:/00_Fikri/02_NGODING/Android/absent-app/app/src/main/res/layout/fragment_leave.xml" value="0.30416666666666664" />
@@ -65,7 +68,7 @@
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_profile.xml" value="0.242973708068903" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_spot_one.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/fragment_spot_two.xml" value="0.3578125" />
-        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/item_leave.xml" value="0.6561151079136691" />
+        <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/item_leave.xml" value="0.67" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/layout/layout_progress.xml" value="0.358695652173913" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/menu/main_menu.xml" value="0.34814814814814815" />
         <entry key="..\:/Users/A.F.S/Documents/#FISECODE/#ANDROID/absent-app/app/src/main/res/xml/network_security_config.xml" value="0.1" />
