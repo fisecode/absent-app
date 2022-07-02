@@ -5,7 +5,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -78,6 +77,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private var currentLocation: Location? = null
     private var locationCallBack: LocationCallback1? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var spinner: AutoCompleteTextView? = null
 
     private var spotList: ArrayList<String> = ArrayList()
     private var latitude = -6.284665797423048
@@ -88,9 +88,8 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityAbsentSpotBinding.inflate(layoutInflater)
         bindingBottomSheet = binding?.layoutBottomSheet
         setContentView(binding?.root)
-
-        setupMaps()
         init()
+        setupMaps()
         onClick()
     }
 
@@ -133,22 +132,21 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupMaps() {
-        mapAbsentSpot =
-            supportFragmentManager.findFragmentById(R.id.map_absent_spot) as? SupportMapFragment
+        mapAbsentSpot = supportFragmentManager.findFragmentById(R.id.map_absent_spot) as? SupportMapFragment
         mapAbsentSpot?.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         if (checkPermission()) {
-            val absentSpotName = bindingBottomSheet?.autoCompleteTextView?.text.toString()
-            if (absentSpotName == "Office"){
+            val absentSpotName = HawkStorage.instance(this).getAbsentSpot()?.nameSpot
+            if (absentSpotName == "Office" || absentSpotName.isNullOrBlank()){
+                bindingBottomSheet?.autoCompleteTextView?.setText("Office")
                 officeMap()
             }else{
                 bindingBottomSheet?.autoCompleteTextView?.setText(absentSpotName)
                 goToCurrentLocation()
             }
-            officeMap()
         } else {
             setRequestPermission()
         }
@@ -177,14 +175,20 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun init() {
-        //Top Navigation
-//        val absentSpotStatus = HawkStorage.instance(this).getAbsentSpot().status
-//        if (absentSpotStatus == "Pending") {
-//            bindingBottomSheet?.btnSubmitSpot?.backgroundTintList =
-//                ColorStateList.valueOf(getColor(R.color.grey))
-//        }
         setSupportActionBar(binding?.tbAbsentSpot)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        spinner()
+
+        val absentSpotStatus = HawkStorage.instance(this).getAbsentSpot()?.status
+        if (absentSpotStatus == "Pending"){
+            bindingBottomSheet?.btnSubmitSpot?.text = "Waiting for Approval"
+            bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.grey)
+            bindingBottomSheet?.btnSubmitSpot?.isEnabled = false
+        }else{
+            bindingBottomSheet?.btnSubmitSpot?.text = getString(R.string.submit)
+            bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.color_primary)
+            bindingBottomSheet?.btnSubmitSpot?.isEnabled = true
+        }
 
         //Setup BottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(bindingBottomSheet!!.bottomSheetAbsentSpot)
@@ -201,35 +205,33 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
         locationSettingsRequest = builder.build()
 
+    }
+
+    private fun spinner() {
         //Setup Spinner
         spotList = ArrayList()
         spotList.add("Office")
         spotList.add("Home")
-        val spinner = bindingBottomSheet?.autoCompleteTextView
-        val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, spotList)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner?.setAdapter(adapter)
-        spinner?.setText(adapter.getItem(0).toString(), false)
-        bindingBottomSheet?.tvCurrentLocation?.text = spinner?.text
+        spinner = bindingBottomSheet?.autoCompleteTextView
         spinner?.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, p2, _ ->
                 if (p2 == 0) {
-                    map?.clear()
-                    map?.isMyLocationEnabled = false
-                    binding?.fabGetCurrentLocation?.visibility = View.GONE
-                    fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
                     officeMap()
                 } else {
-                    map?.clear()
-                    binding?.fabGetCurrentLocation?.visibility = View.VISIBLE
                     goToCurrentLocation()
                 }
             }
-
     }
 
     private fun officeMap() {
+        val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, spotList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner?.setAdapter(adapter)
         bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.location)
+        map?.clear()
+        map?.isMyLocationEnabled = false
+        binding?.fabGetCurrentLocation?.visibility = View.GONE
+        fusedLocationProviderClient?.removeLocationUpdates(locationCallBack!!)
         map?.addMarker(
             MarkerOptions()
                 .position(LatLng(latitude, longitude))
@@ -249,8 +251,13 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun goToCurrentLocation() {
+        map?.clear()
         bindingBottomSheet?.tvCurrentLocation?.text = getString(R.string.search_your_location)
         bindingBottomSheet?.tittleCurrentLocation?.text = getString(R.string.current_location)
+        binding?.fabGetCurrentLocation?.visibility = View.VISIBLE
+        val adapter = ArrayAdapter(this, R.layout.dropdown_leave_type, spotList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner?.setAdapter(adapter)
         if (checkPermission()) {
             if (isLocationEnabled()) {
                 map?.isMyLocationEnabled = true
@@ -401,13 +408,16 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (response.isSuccessful) {
                         val absentSpot = response.body()?.data?.absentSpot
                         val message = response.body()?.meta?.message
-                        if (absentSpot != null && message != null) {
-                            HawkStorage.instance(this@AbsentSpotActivity).setAbsentSpot(absentSpot)
+                        if (message != null) {
                             MyDialog.dynamicDialog(
                                 this@AbsentSpotActivity,
                                 getString(R.string.success),
                                 message
                             )
+                            bindingBottomSheet?.btnSubmitSpot?.text = "Waiting for Approval"
+                            bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.grey)
+                            bindingBottomSheet?.btnSubmitSpot?.isEnabled = false
+                            HawkStorage.instance(this@AbsentSpotActivity).setAbsentSpot(absentSpot)
                         }
                     } else {
                         val errorConverter: Converter<ResponseBody, Wrapper<AbsentSpotResponse>> =

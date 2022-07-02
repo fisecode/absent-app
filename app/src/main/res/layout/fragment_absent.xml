@@ -153,25 +153,29 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_submit_spot"
+                    android:id="@+id/btn_check_in"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_btn_active"
                     android:text="@string/check_in"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    app:backgroundTint="#2FD686"
-                    android:background="@drawable/bg_btn_active"/>
+                    android:textSize="14sp"
+                    app:backgroundTint="#2FD686" />
 
                 <Button
                     android:id="@+id/btn_check_out"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="120dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="20dp"
+                    android:background="@drawable/bg_btn_active"
                     android:text="@string/check_out"
                     android:textAllCaps="false"
-                    android:layout_marginStart="10dp"
                     android:textColor="@color/white"
-                    android:background="@drawable/bg_btn_active"
-                    app:backgroundTint="@android:color/darker_gray"/>
+                    android:textSize="14sp"
+                    app:backgroundTint="@android:color/darker_gray" />
 
             </LinearLayout>
 
@@ -292,19 +296,20 @@
 
             <Button
                 android:id="@+id/btn_history"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/bg_btn_primary"
-                android:text="@string/history"
-                android:textStyle="bold"
-                android:textColor="@color/white"
                 android:elevation="4dp"
+                android:text="@string/history"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:backgroundTint="@color/color_primary"
-                style="@style/Widget.Material3.Button.ElevatedButton"
                 tools:ignore="TextContrastCheck" />
         </LinearLayout>
 

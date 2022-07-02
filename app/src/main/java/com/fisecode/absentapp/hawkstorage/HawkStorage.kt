@@ -52,11 +52,11 @@ class HawkStorage {
         return Hawk.get(LEAVEHISTORY_KEY)
     }
 
-    fun setAbsentSpot(absentSpot: AbsentSpot){
+    fun setAbsentSpot(absentSpot: AbsentSpot?){
         Hawk.put(ABSENTSPOT_KEY, absentSpot)
     }
 
-    fun getAbsentSpot(): AbsentSpot{
+    fun getAbsentSpot(): AbsentSpot?{
         return Hawk.get(ABSENTSPOT_KEY)
     }
 

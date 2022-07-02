@@ -137,7 +137,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:backgroundTint="@color/grey"/>
+                        app:backgroundTint="@color/grey"/>
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

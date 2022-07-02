@@ -55,4 +55,8 @@ interface AbsentApiServices {
     fun absentSpot(@Header("Authorization") token: String,
                       @PartMap params: HashMap<String, RequestBody>
     ): Call<Wrapper<AbsentSpotResponse>>
+
+    @Headers("Accept: application/json")
+    @GET("absent/spot")
+    fun getAbsentSpot(@Header("Authorization") token: String): Call<Wrapper<AbsentSpotResponse>>
 }

@@ -12,6 +12,7 @@ import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.FragmentAbsentBinding
 import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
+import com.fisecode.absentapp.model.AbsentSpotResponse
 import com.fisecode.absentapp.model.GetUserResponse
 import com.fisecode.absentapp.model.Wrapper
 import com.fisecode.absentapp.networking.ApiServices
@@ -48,15 +49,27 @@ class AbsentFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         getUserData()
+        getAbsentSpot()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 
     private fun init() {
-        //
+        updateView()
+    }
+
+    private fun onClick() {
+        binding?.btnHistory?.setOnClickListener {
+            context?.startActivity<HistoryActivity>()
+        }
     }
 
     private fun getUserData() {
         val token = HawkStorage.instance(context).getToken()
-        MyDialog.showProgressDialog(context)
+//        MyDialog.showProgressDialog(context)
         ApiServices.getAbsentServices()
             .getUser("Bearer $token")
             .enqueue(object : Callback<Wrapper<GetUserResponse>>{
@@ -64,7 +77,7 @@ class AbsentFragment : Fragment() {
                     call: Call<Wrapper<GetUserResponse>>,
                     response: Response<Wrapper<GetUserResponse>>
                 ) {
-                    MyDialog.hideDialog()
+//                    MyDialog.hideDialog()
                     if (response.isSuccessful){
                         val user = response.body()?.data?.employee?.get(0)?.user
                         val employee = response.body()?.data?.employee?.first()
@@ -97,7 +110,53 @@ class AbsentFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<Wrapper<GetUserResponse>>, t: Throwable) {
-                    MyDialog.hideDialog()
+//                    MyDialog.hideDialog()
+                    Log.e(TAG, "Error: ${t.message}")
+                }
+
+            })
+    }
+
+    private fun getAbsentSpot() {
+        val token = HawkStorage.instance(context).getToken()
+        ApiServices.getAbsentServices()
+            .getAbsentSpot("Bearer $token")
+            .enqueue(object : Callback<Wrapper<AbsentSpotResponse>>{
+                override fun onResponse(
+                    call: Call<Wrapper<AbsentSpotResponse>>,
+                    response: Response<Wrapper<AbsentSpotResponse>>
+                ) {
+//                    MyDialog.hideDialog()
+                    if (response.isSuccessful){
+                        val absentSpot = response.body()?.data?.absentSpot
+                        if (absentSpot != null){
+                            HawkStorage.instance(context).setAbsentSpot(absentSpot)
+                        }
+                    }else{
+                        val errorConverter: Converter<ResponseBody, Wrapper<AbsentSpotResponse>> =
+                            RetrofitClient
+                                .getClient()
+                                .responseBodyConverter(
+                                    AbsentSpotResponse::class.java,
+                                    arrayOfNulls<Annotation>(0)
+                                )
+                        val errorResponse: Wrapper<AbsentSpotResponse>?
+                        try {
+                            response.errorBody()?.let {
+                                errorResponse = errorConverter.convert(it)
+                                MyDialog.dynamicDialog(context,
+                                    getString(R.string.failed),
+                                    errorResponse?.meta?.message.toString())
+                            }
+                        }catch (e: IOException){
+                            e.printStackTrace()
+                            Log.e(TAG, "Error: ${e.message}")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Wrapper<AbsentSpotResponse>>, t: Throwable) {
+//                    MyDialog.hideDialog()
                     Log.e(TAG, "Error: ${t.message}")
                 }
 
@@ -111,12 +170,6 @@ class AbsentFragment : Fragment() {
         Glide.with(requireContext()).load(imageUrl).placeholder(R.drawable.employee_photo).into(binding!!.ivEmployeePhoto)
         binding?.tvNameEmployee?.text = user.name
         binding?.tvNumberIdEmployee?.text = Helpers.employeeIdFormat(employee.employeeId)
-    }
-
-    private fun onClick() {
-        binding?.btnHistory?.setOnClickListener {
-            context?.startActivity<HistoryActivity>()
-        }
     }
 
     companion object{

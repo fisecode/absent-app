@@ -3,6 +3,7 @@ package com.fisecode.absentapp.views.leave
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ActivityLeaveRequestBinding
@@ -116,7 +117,10 @@ class LeaveRequestActivity : AppCompatActivity() {
                     if (response.isSuccessful){
                         val message = response.body()?.meta?.message
                         if (message != null) {
-                            MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.success), message)
+                            finish();
+                            onBackPressed();
+                            Toast.makeText(this@LeaveRequestActivity, message, Toast.LENGTH_SHORT).show()
+//                            MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.success), message)
                         }
                     }else{
                         MyDialog.dynamicDialog(this@LeaveRequestActivity, getString(R.string.alert), getString(R.string.something_wrong))

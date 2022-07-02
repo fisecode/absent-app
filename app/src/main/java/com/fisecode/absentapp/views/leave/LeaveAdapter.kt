@@ -1,17 +1,13 @@
 package com.fisecode.absentapp.views.leave
 
-import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.ItemLeaveBinding
 import com.fisecode.absentapp.model.LeaveHistory
-import com.fisecode.absentapp.model.dummy.LeaveModel
 import com.fisecode.absentapp.utils.Helpers.formatTo
 import com.fisecode.absentapp.utils.Helpers.toDate
 
@@ -42,13 +38,13 @@ class LeaveAdapter(
                 binding.tvReason.text = this.leaveReason
                 when (this.status) {
                     "Reject" -> {
-                        binding.tvStatusHeader.setTextColor(Color.parseColor("#F53558"));
+                        binding.tvStatusHeader.setTextColor(Color.parseColor("#F53558"))
                     }
                     "Approved" -> {
-                        binding.tvStatusHeader.setTextColor(Color.parseColor("#2FD686"));
+                        binding.tvStatusHeader.setTextColor(Color.parseColor("#2FD686"))
                     }
                     else -> {
-                        binding.tvStatusHeader.setTextColor(Color.parseColor("#FFB931"));
+                        binding.tvStatusHeader.setTextColor(Color.parseColor("#FFB931"))
                     }
                 }
                 binding.clExpand.visibility = if (this.expand) View.VISIBLE else View.GONE

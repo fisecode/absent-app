@@ -88,12 +88,13 @@
             android:id="@+id/btn_signin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_btn_primary"
             android:text="@string/sign_in"
-            android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_marginBottom="20dp"
-            tools:ignore="TextContrastCheck"/>
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:ignore="TextContrastCheck" />
 
     </LinearLayout>
 
