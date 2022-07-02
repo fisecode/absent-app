@@ -56,7 +56,7 @@ class HawkStorage {
         Hawk.put(ABSENTSPOT_KEY, absentSpot)
     }
 
-    fun getAbsentSpot(): List<LeaveHistory>?{
+    fun getAbsentSpot(): AbsentSpot{
         return Hawk.get(ABSENTSPOT_KEY)
     }
 

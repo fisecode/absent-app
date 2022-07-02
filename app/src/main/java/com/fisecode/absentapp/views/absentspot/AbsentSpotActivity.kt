@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -140,6 +141,13 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         if (checkPermission()) {
+            val absentSpotName = bindingBottomSheet?.autoCompleteTextView?.text.toString()
+            if (absentSpotName == "Office"){
+                officeMap()
+            }else{
+                bindingBottomSheet?.autoCompleteTextView?.setText(absentSpotName)
+                goToCurrentLocation()
+            }
             officeMap()
         } else {
             setRequestPermission()
@@ -170,6 +178,11 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun init() {
         //Top Navigation
+//        val absentSpotStatus = HawkStorage.instance(this).getAbsentSpot().status
+//        if (absentSpotStatus == "Pending") {
+//            bindingBottomSheet?.btnSubmitSpot?.backgroundTintList =
+//                ColorStateList.valueOf(getColor(R.color.grey))
+//        }
         setSupportActionBar(binding?.tbAbsentSpot)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -414,7 +427,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                                     errorResponse?.meta?.message.toString()
                                 )
                             }
-                        }catch (e: IOException){
+                        } catch (e: IOException) {
                             e.printStackTrace()
                             Log.e(TAG, "Error: ${e.message}")
                         }
