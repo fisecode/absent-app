@@ -22,13 +22,9 @@ import com.fisecode.absentapp.databinding.BottomSheetAbsentSpotBinding
 import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
 import com.fisecode.absentapp.model.AbsentSpotResponse
-import com.fisecode.absentapp.model.AbsentSpot
-import com.fisecode.absentapp.model.SignInResponse
 import com.fisecode.absentapp.model.Wrapper
 import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
-import com.fisecode.absentapp.views.employeedetail.EditProfileActivity
-import com.fisecode.absentapp.views.signin.SignInActivity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -101,6 +97,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
+
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
@@ -202,7 +199,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
         spinner?.setText(adapter.getItem(0).toString(), false)
         bindingBottomSheet?.tvCurrentLocation?.text = spinner?.text
         spinner?.onItemClickListener =
-            AdapterView.OnItemClickListener { p0, _, p2, _ ->
+            AdapterView.OnItemClickListener { _, _, p2, _ ->
                 if (p2 == 0) {
                     map?.clear()
                     map?.isMyLocationEnabled = false
