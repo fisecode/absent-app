@@ -66,4 +66,7 @@
     <string name="required_permission">Required Permission</string>
     <string name="search_your_location">Search your location...</string>
     <string name="location">Location</string>
+    <string name="successfully_allowed">Successfully allowed</string>
+    <string name="app_permission_denied">App permission denied.</string>
+    <string name="settings">Settings</string>
 </resources>

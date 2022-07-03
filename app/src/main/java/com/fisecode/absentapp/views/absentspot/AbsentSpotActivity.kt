@@ -47,7 +47,7 @@ import retrofit2.Response
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
-import com.google.android.gms.location.LocationCallback as LocationCallback1
+import com.google.android.gms.location.LocationCallback
 
 
 class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -75,7 +75,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
     private var locationSettingsRequest: LocationSettingsRequest? = null
     private var settingsClient: SettingsClient? = null
     private var currentLocation: Location? = null
-    private var locationCallBack: LocationCallback1? = null
+    private var locationCallBack: LocationCallback? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var spinner: AutoCompleteTextView? = null
 
@@ -184,6 +184,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
             bindingBottomSheet?.btnSubmitSpot?.text = "Waiting for Approval"
             bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.grey)
             bindingBottomSheet?.btnSubmitSpot?.isEnabled = false
+            bindingBottomSheet?.tiAbsentSpot?.isEnabled = false
         }else{
             bindingBottomSheet?.btnSubmitSpot?.text = getString(R.string.submit)
             bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.color_primary)
@@ -264,7 +265,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                 map?.uiSettings?.isMyLocationButtonEnabled = false
                 fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-                locationCallBack = object : LocationCallback1() {
+                locationCallBack = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
                         super.onLocationResult(locationResult)
                         currentLocation = locationResult.lastLocation
@@ -417,6 +418,7 @@ class AbsentSpotActivity : AppCompatActivity(), OnMapReadyCallback {
                             bindingBottomSheet?.btnSubmitSpot?.text = "Waiting for Approval"
                             bindingBottomSheet?.btnSubmitSpot?.backgroundTintList = getColorStateList(R.color.grey)
                             bindingBottomSheet?.btnSubmitSpot?.isEnabled = false
+                            bindingBottomSheet?.tiAbsentSpot?.isEnabled = false
                             HawkStorage.instance(this@AbsentSpotActivity).setAbsentSpot(absentSpot)
                         }
                     } else {
