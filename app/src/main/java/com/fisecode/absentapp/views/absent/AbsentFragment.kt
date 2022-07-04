@@ -147,10 +147,7 @@ class AbsentFragment : Fragment() {
         binding?.btnCheckOut?.setOnClickListener {
             val token = HawkStorage.instance(context).getToken()
             if (isCheckIn){
-                MyDialog.showProgressDialog(context)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    getLastLocation()
-                }, 2000)
+                sendDataAbsentOut(token, "out")
             }
         }
     }
@@ -239,11 +236,7 @@ class AbsentFragment : Fragment() {
                     val fileUri = data?.data!!
 
                     val token = HawkStorage.instance(context).getToken()
-                    if (isCheckIn){
-                        sendDataAbsent(fileUri, token, "out")
-                    }else{
-                        sendDataAbsent(fileUri, token, "in")
-                    }
+                    sendDataAbsentIn(fileUri, token)
                 }
                 ImagePicker.RESULT_ERROR -> {
                     Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
@@ -258,7 +251,7 @@ class AbsentFragment : Fragment() {
             }
         }
 
-    private fun sendDataAbsent(photoPath: Uri?, token: String, type: String) {
+    private fun sendDataAbsentIn(photoPath: Uri, token: String) {
         val params = HashMap<String, RequestBody>()
         MyDialog.showProgressDialog(context)
         if (currentLocation != null) {
@@ -266,7 +259,8 @@ class AbsentFragment : Fragment() {
             val longitude = currentLocation?.longitude.toString()
             val address = getAddress(latitude.toDouble(), longitude.toDouble()).toString()
             val absentSpot = HawkStorage.instance(context).getAbsentSpot()?.nameSpot.toString()
-            val file = File(photoPath?.path)
+            val file = File(photoPath.path!!)
+            val type = "in"
             val uri = FileProvider.getUriForFile(
                 context!!,
                 BuildConfig.APPLICATION_ID + ".fileprovider",
@@ -294,7 +288,7 @@ class AbsentFragment : Fragment() {
                 MultipartBody.Part.createFormData("photo", file.name, requestPhotoFile)
 
             ApiServices.getAbsentServices()
-                .absent("Bearer $token", params, multipartBody)
+                .absentIn("Bearer $token", params, multipartBody)
                 .enqueue(object : Callback<Wrapper<AbsentResponse>> {
                     override fun onResponse(
                         call: Call<Wrapper<AbsentResponse>>,
@@ -303,25 +297,17 @@ class AbsentFragment : Fragment() {
                         MyDialog.hideDialog()
                         if (response.isSuccessful) {
                             val absentResponse = response.body()
-                            if (type == "in") {
-                                MyDialog.dynamicDialog(
-                                    context,
-                                    getString(R.string.check_in_success),
-                                    absentResponse?.meta?.message.toString()
-                                )
-                            } else {
-                                MyDialog.dynamicDialog(
-                                    context,
-                                    getString(R.string.check_out_seccess),
-                                    absentResponse?.meta?.message.toString()
-                                )
-                            }
+                            MyDialog.dynamicDialog(
+                                context,
+                                getString(R.string.check_in_success),
+                                absentResponse?.meta?.message.toString()
+                            )
                             checkIfAlreadyPresent()
                         } else {
                             MyDialog.dynamicDialog(
                                 context,
                                 getString(R.string.alert),
-                                getString(R.string.something_wrong))
+                                response.message())
                         }
                     }
 
@@ -333,6 +319,54 @@ class AbsentFragment : Fragment() {
                 })
 
         }
+    }
+
+    private fun sendDataAbsentOut(token: String, type: String) {
+        val params = HashMap<String, RequestBody>()
+        MyDialog.showProgressDialog(context)
+        val mediaTypeText = MultipartBody.FORM
+        val requestType = type.toRequestBody(mediaTypeText)
+
+        params["type"] = requestType
+        ApiServices.getAbsentServices()
+            .absentOut("Bearer $token", params)
+            .enqueue(object : Callback<Wrapper<AbsentResponse>> {
+                override fun onResponse(
+                    call: Call<Wrapper<AbsentResponse>>,
+                    response: Response<Wrapper<AbsentResponse>>
+                ) {
+                    MyDialog.hideDialog()
+                    if (response.isSuccessful) {
+                        val absentResponse = response.body()
+                        if (type == "in") {
+                            MyDialog.dynamicDialog(
+                                context,
+                                getString(R.string.check_in_success),
+                                absentResponse?.meta?.message.toString()
+                            )
+                        } else {
+                            MyDialog.dynamicDialog(
+                                context,
+                                getString(R.string.check_out_seccess),
+                                absentResponse?.meta?.message.toString()
+                            )
+                        }
+                        checkIfAlreadyPresent()
+                    } else {
+                        MyDialog.dynamicDialog(
+                            context,
+                            getString(R.string.alert),
+                            getString(R.string.something_wrong))
+                    }
+                }
+
+                override fun onFailure(call: Call<Wrapper<AbsentResponse>>, t: Throwable) {
+                    MyDialog.hideDialog()
+                    Log.e(TAG, "Error: ${t.message}")
+                }
+
+            })
+
     }
 
     private fun checkIfAlreadyPresent() {

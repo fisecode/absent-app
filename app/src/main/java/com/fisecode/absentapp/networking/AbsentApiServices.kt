@@ -63,9 +63,16 @@ interface AbsentApiServices {
     @Multipart
     @Headers("Accept: application/json")
     @POST("absent")
-    fun absent(@Header("Authorization") token: String,
+    fun absentIn(@Header("Authorization") token: String,
                @PartMap params: HashMap<String, RequestBody>,
                @Part photo: MultipartBody.Part
+    ): Call<Wrapper<AbsentResponse>>
+
+    @Multipart
+    @Headers("Accept: application/json")
+    @POST("absent")
+    fun absentOut(@Header("Authorization") token: String,
+               @PartMap params: HashMap<String, RequestBody>
     ): Call<Wrapper<AbsentResponse>>
 
     @Headers("Accept: application/json")
