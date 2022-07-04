@@ -349,7 +349,6 @@ class AbsentFragment : Fragment() {
                     if (response.isSuccessful){
                         val histories = response.body()?.data?.absent
                         if (histories != null && histories.isNotEmpty()){
-                            HawkStorage.instance(context).setAbsent(histories)
                             if (histories[0].status == "Present"){
 //                                HawkStorage.instance(context).setAbsent(histories)
                                 isCheckIn = false
