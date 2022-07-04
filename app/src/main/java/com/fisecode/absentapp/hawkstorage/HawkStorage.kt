@@ -12,6 +12,7 @@ class HawkStorage {
         private const val LEAVETYPE_KEY = "leavetype_key"
         private const val LEAVEHISTORY_KEY = "leavehistory_key"
         private const val ABSENTSPOT_KEY = "absentspot_key"
+        private const val ABSENT_KEY = "absent_key"
         private val hawkStorage = HawkStorage()
 
         fun instance(context: Context?): HawkStorage{
@@ -58,6 +59,18 @@ class HawkStorage {
 
     fun getAbsentSpot(): AbsentSpot?{
         return Hawk.get(ABSENTSPOT_KEY)
+    }
+
+    fun setAbsent(absent: List<AbsentHistory>?){
+        Hawk.put(ABSENT_KEY, absent)
+    }
+
+    fun getAbsent(): List<AbsentHistory>?{
+        return Hawk.get(ABSENT_KEY)
+    }
+
+    fun delAbsent() {
+        Hawk.delete(ABSENT_KEY)
     }
 
     fun setToken(accessToken: String){

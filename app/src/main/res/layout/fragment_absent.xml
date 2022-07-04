@@ -20,11 +20,12 @@
             android:id="@+id/iv_top_bg_absent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/todo"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/top_bg_absent"
-            android:contentDescription="@string/todo"/>
+            app:srcCompat="@drawable/top_bg_absent" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_employee_photo"
@@ -59,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"
                 android:text="@string/welcome_back"
-                android:textColor="#D81B60"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -69,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"
                 android:text="@string/default_text"
-                android:textColor="#D81B60"
+                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -85,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto"
                     android:text="@string/id"
-                    android:textColor="#D81B60"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -96,7 +97,7 @@
                     android:layout_marginStart="5dp"
                     android:fontFamily="@font/roboto"
                     android:text="@string/default_text"
-                    android:textColor="#D81B60"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -147,6 +148,16 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tv_present_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/you_are_already_present_today"
+                android:textColor="@android:color/darker_gray"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -156,20 +167,20 @@
                     android:id="@+id/btn_check_in"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="120dp"
-                    android:layout_height="48dp"
+                    android:layout_height="40dp"
                     android:background="@drawable/bg_btn_active"
                     android:text="@string/check_in"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:backgroundTint="#2FD686" />
+                    app:backgroundTint="@color/btn_active" />
 
                 <Button
                     android:id="@+id/btn_check_out"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="120dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="20dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
                     android:background="@drawable/bg_btn_active"
                     android:text="@string/check_out"
                     android:textAllCaps="false"

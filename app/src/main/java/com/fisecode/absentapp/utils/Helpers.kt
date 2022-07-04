@@ -28,8 +28,8 @@ object Helpers {
         return formatter.format(this)
     }
 
-    fun String.getDateForServer(): String{
-        val currentTime = this
+    fun getCurrentDateForServer(): String{
+        val currentTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return dateFormat.format(currentTime)
     }

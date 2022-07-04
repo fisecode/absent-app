@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -14,6 +15,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,16 +24,17 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources.getColorStateList
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.fisecode.absentapp.BuildConfig
 import com.fisecode.absentapp.R
 import com.fisecode.absentapp.databinding.FragmentAbsentBinding
 import com.fisecode.absentapp.dialog.MyDialog
 import com.fisecode.absentapp.hawkstorage.HawkStorage
-import com.fisecode.absentapp.model.AbsentSpotResponse
-import com.fisecode.absentapp.model.GetUserResponse
-import com.fisecode.absentapp.model.Wrapper
+import com.fisecode.absentapp.model.*
 import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.utils.Helpers
@@ -44,14 +47,21 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import org.jetbrains.anko.startActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
 import retrofit2.Response
+import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.math.*
 
 class AbsentFragment : Fragment() {
 
@@ -76,6 +86,9 @@ class AbsentFragment : Fragment() {
     private lateinit var locationCallBack: LocationCallback
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
+    private var currentPhotoPath = ""
+    private var isCheckIn = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,6 +107,7 @@ class AbsentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        checkIfAlreadyPresent()
         getUserData()
         getAbsentSpot()
     }
@@ -106,14 +120,16 @@ class AbsentFragment : Fragment() {
     private fun init() {
         updateView()
         //Setup Location
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        locationManager = context?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        locationManager =
+            context?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         settingsClient = LocationServices.getSettingsClient(requireActivity())
         locationRequest = LocationRequest.create().apply {
             interval = 1000 * 5
             priority = Priority.PRIORITY_HIGH_ACCURACY
         }
-        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         locationSettingsRequest = builder.build()
 
     }
@@ -128,30 +144,60 @@ class AbsentFragment : Fragment() {
                 getLastLocation()
             }, 2000)
         }
+        binding?.btnCheckOut?.setOnClickListener {
+            val token = HawkStorage.instance(context).getToken()
+            if (isCheckIn){
+                MyDialog.showProgressDialog(context)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getLastLocation()
+                }, 2000)
+            }
+        }
     }
 
     private fun getLastLocation() {
-        if (checkPermission()){
-            if (isLocationEnabled()){
-                val absentSpotStatus = HawkStorage.instance(context).getAbsentSpot()
-                if (absentSpotStatus?.status == "Approved"){
+        if (checkPermission()) {
+            if (isLocationEnabled()) {
+                val absentSpot = HawkStorage.instance(context).getAbsentSpot()
+                if (absentSpot?.status == "Approved") {
                     locationCallBack = object : LocationCallback() {
                         override fun onLocationResult(locationResult: LocationResult) {
                             super.onLocationResult(locationResult)
                             currentLocation = locationResult.lastLocation
 
                             if (currentLocation != null) {
-                                val latitude = currentLocation?.latitude
-                                val longitude = currentLocation?.longitude
+                                val currentLat = currentLocation?.latitude
+                                val currentLong = currentLocation?.longitude
+                                val absentSpotLat = absentSpot.latitude?.toDouble()
+                                val absentSpotLong = absentSpot.longitude?.toDouble()
 
-                                Toast.makeText(context, "SUCCESS", Toast.LENGTH_SHORT).show()
-                                ImagePicker.with(this@AbsentFragment)
-                                    .cameraOnly() 			//Crop image(Optional), Check Customization for more option
-                                    .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                                    .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
-                                    .createIntent { intent ->
-                                        startForProfileImageResult.launch(intent)
-                                    }
+                                val geofence = calculateDistance(
+                                    currentLat!!,
+                                    currentLong!!,
+                                    absentSpotLat!!,
+                                    absentSpotLong!!
+                                ) * 1000
+
+                                if (geofence < 100.0) {
+                                    ImagePicker.with(this@AbsentFragment)
+                                        .cameraOnly()  //Final image resolution will be less than 1080 x 1080(Optional)
+                                        .createIntent { intent ->
+                                            startForProfileImageResult.launch(intent)
+                                        }
+                                    Toast.makeText(
+                                        context,
+                                        getString(R.string.success),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    MyDialog.dynamicDialog(
+                                        context,
+                                        getString(R.string.failed),
+                                        getString(R.string.you_are_outside_the_absent_area)
+                                    )
+                                }
+
+
                             }
                             fusedLocationProviderClient?.removeLocationUpdates(this)
                             MyDialog.hideDialog()
@@ -162,17 +208,21 @@ class AbsentFragment : Fragment() {
                         locationCallBack,
                         Looper.getMainLooper()
                     )
-                }else{
+                } else {
                     MyDialog.hideDialog()
-                    MyDialog.dynamicDialog(context, getString(R.string.failed), "Your absence spot is waiting for approval.")
+                    MyDialog.dynamicDialog(
+                        context,
+                        getString(R.string.failed),
+                        "Your absence spot is waiting for approval."
+                    )
                 }
 
-            }else{
+            } else {
                 MyDialog.hideDialog()
                 goToTurnOnGps()
             }
 
-        }else {
+        } else {
             MyDialog.hideDialog()
             requestPermissionLauncher.launch(requestPermissions)
         }
@@ -188,15 +238,154 @@ class AbsentFragment : Fragment() {
                     //Image Uri will not be null for RESULT_OK
                     val fileUri = data?.data!!
 
+                    val token = HawkStorage.instance(context).getToken()
+                    if (isCheckIn){
+                        sendDataAbsent(fileUri, token, "out")
+                    }else{
+                        sendDataAbsent(fileUri, token, "in")
+                    }
                 }
                 ImagePicker.RESULT_ERROR -> {
                     Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    MyDialog.dynamicDialog(context, getString(R.string.failed), "Check In Cancelled")
+                    MyDialog.dynamicDialog(
+                        context,
+                        getString(R.string.failed),
+                        "Check In Cancelled"
+                    )
                 }
             }
         }
+
+    private fun sendDataAbsent(photoPath: Uri?, token: String, type: String) {
+        val params = HashMap<String, RequestBody>()
+        MyDialog.showProgressDialog(context)
+        if (currentLocation != null) {
+            val latitude = currentLocation?.latitude.toString()
+            val longitude = currentLocation?.longitude.toString()
+            val address = getAddress(latitude.toDouble(), longitude.toDouble()).toString()
+            val absentSpot = HawkStorage.instance(context).getAbsentSpot()?.nameSpot.toString()
+            val file = File(photoPath?.path)
+            val uri = FileProvider.getUriForFile(
+                context!!,
+                BuildConfig.APPLICATION_ID + ".fileprovider",
+                file
+            )
+            val typeFile = context!!.contentResolver.getType(uri)
+
+            val mediaTypeText = MultipartBody.FORM
+            val mediaTypeFile = typeFile?.toMediaType()
+
+            val requestLatitude = latitude.toRequestBody(mediaTypeText)
+            val requestLongitude = longitude.toRequestBody(mediaTypeText)
+            val requestAddress = address.toRequestBody(mediaTypeText)
+            val requestAbsentSpot = absentSpot.toRequestBody(mediaTypeText)
+            val requestType = type.toRequestBody(mediaTypeText)
+
+            params["latitude"] = requestLatitude
+            params["longitude"] = requestLongitude
+            params["absent_spot"] = requestAbsentSpot
+            params["address"] = requestAddress
+            params["type"] = requestType
+
+            val requestPhotoFile = file.asRequestBody(mediaTypeFile)
+            val multipartBody =
+                MultipartBody.Part.createFormData("photo", file.name, requestPhotoFile)
+
+            ApiServices.getAbsentServices()
+                .absent("Bearer $token", params, multipartBody)
+                .enqueue(object : Callback<Wrapper<AbsentResponse>> {
+                    override fun onResponse(
+                        call: Call<Wrapper<AbsentResponse>>,
+                        response: Response<Wrapper<AbsentResponse>>
+                    ) {
+                        MyDialog.hideDialog()
+                        if (response.isSuccessful) {
+                            val absentResponse = response.body()
+                            if (type == "in") {
+                                MyDialog.dynamicDialog(
+                                    context,
+                                    getString(R.string.check_in_success),
+                                    absentResponse?.meta?.message.toString()
+                                )
+                            } else {
+                                MyDialog.dynamicDialog(
+                                    context,
+                                    getString(R.string.check_out_seccess),
+                                    absentResponse?.meta?.message.toString()
+                                )
+                            }
+                            checkIfAlreadyPresent()
+                        } else {
+                            MyDialog.dynamicDialog(
+                                context,
+                                getString(R.string.alert),
+                                getString(R.string.something_wrong))
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Wrapper<AbsentResponse>>, t: Throwable) {
+                        MyDialog.hideDialog()
+                        Log.e(TAG, "Error: ${t.message}")
+                    }
+
+                })
+
+        }
+    }
+
+    private fun checkIfAlreadyPresent() {
+        val token = HawkStorage.instance(context).getToken()
+        val currentDate = Helpers.getCurrentDateForServer()
+
+        ApiServices.getAbsentServices()
+            .getHistoryAbsent("Bearer $token", currentDate, currentDate)
+            .enqueue(object :Callback<Wrapper<AbsentHistoryResponse>>{
+                override fun onResponse(
+                    call: Call<Wrapper<AbsentHistoryResponse>>,
+                    response: Response<Wrapper<AbsentHistoryResponse>>
+                ) {
+                    if (response.isSuccessful){
+                        val histories = response.body()?.data?.absent
+                        if (histories != null && histories.isNotEmpty()){
+                            HawkStorage.instance(context).setAbsent(histories)
+                            if (histories[0].status == "Present"){
+//                                HawkStorage.instance(context).setAbsent(histories)
+                                isCheckIn = false
+                                checkIsCheckIn()
+                                binding?.btnCheckIn?.visibility = View.GONE
+                                binding?.btnCheckOut?.visibility = View.GONE
+                                binding?.tvPresentInfo?.visibility = View.VISIBLE
+                            }else{
+                                isCheckIn = true
+                                checkIsCheckIn()
+                                binding?.btnCheckIn?.visibility = View.VISIBLE
+                                binding?.btnCheckOut?.visibility = View.VISIBLE
+                                binding?.tvPresentInfo?.visibility = View.GONE
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Wrapper<AbsentHistoryResponse>>, t: Throwable) {
+                    Log.e(TAG, "Error: ${t.message}")
+                }
+
+            })
+    }
+
+    private fun checkIsCheckIn() {
+        if (isCheckIn){
+            binding?.btnCheckIn?.isEnabled = false
+            binding?.btnCheckIn?.backgroundTintList = getColorStateList(requireContext(), android.R.color.darker_gray)
+            binding?.btnCheckOut?.backgroundTintList = getColorStateList(requireContext(), R.color.btn_active)
+        }else{
+            binding?.btnCheckOut?.isEnabled = false
+            binding?.btnCheckOut?.backgroundTintList = getColorStateList(requireContext(), android.R.color.darker_gray)
+            binding?.btnCheckIn?.backgroundTintList = getColorStateList(requireContext(), R.color.btn_active)
+        }
+    }
 
     private fun getAddress(latitude: Double, longitude: Double): String? {
         val result: String
@@ -204,12 +393,28 @@ class AbsentFragment : Fragment() {
             val geocode = Geocoder(it, Locale.getDefault())
             val address = geocode.getFromLocation(latitude, longitude, 1)
 
-            if (address.size > 0){
+            if (address.size > 0) {
                 result = address[0].getAddressLine(0)
                 return result
             }
         }
         return null
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6372.8 // in kilometers
+
+        val radiansLat1 = Math.toRadians(lat1)
+        val radiansLat2 = Math.toRadians(lat2)
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        return 2 * r * asin(
+            sqrt(
+                sin(dLat / 2).pow(2.0) + sin(dLon / 2).pow(2.0) * cos(radiansLat1) * cos(
+                    radiansLat2
+                )
+            )
+        )
     }
 
     private fun getUserData() {
@@ -347,13 +552,23 @@ class AbsentFragment : Fragment() {
                 }
 
                 if (isHasPermission) {
-                    if (!isLocationEnabled()){
+                    if (!isLocationEnabled()) {
                         goToTurnOnGps()
                     }
                 } else {
-                    Snackbar.make(requireView(), getString(R.string.app_permission_denied), Snackbar.LENGTH_SHORT).setAction(getString(
-                                            R.string.settings), View.OnClickListener {
-                        startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)))
+                    Snackbar.make(
+                        requireView(),
+                        getString(R.string.app_permission_denied),
+                        Snackbar.LENGTH_SHORT
+                    ).setAction(getString(
+                        R.string.settings
+                    ), View.OnClickListener {
+                        startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                            )
+                        )
                     }).show()
                 }
             }
@@ -377,7 +592,7 @@ class AbsentFragment : Fragment() {
 
     private fun checkPermissionApp() {
         if (checkPermission()) {
-            if (!isLocationEnabled()){
+            if (!isLocationEnabled()) {
                 goToTurnOnGps()
             }
         } else {

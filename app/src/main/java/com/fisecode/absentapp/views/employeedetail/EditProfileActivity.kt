@@ -139,14 +139,13 @@ class EditProfileActivity : AppCompatActivity() {
                 ) {
                     MyDialog.hideDialog()
                     if (response.isSuccessful){
-                        val updateProfileResponse = response.body()
                         val user = response.body()?.data?.employee?.get(0)?.user
                         val employee = response.body()?.data?.employee?.first()
                         if (user != null && employee != null){
                             HawkStorage.instance(this@EditProfileActivity).setUser(user)
                             HawkStorage.instance(this@EditProfileActivity).setEmployee(employee)
-                            finish();
-                            onBackPressed();
+                            finish()
+                            onBackPressed()
                             Toast.makeText(this@EditProfileActivity, "Update Profile Successfully.", Toast.LENGTH_SHORT).show()
                         }
                     }else{

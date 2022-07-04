@@ -60,7 +60,8 @@ class EmployeeDetailActivity : AppCompatActivity() {
                     //Image Uri will not be null for RESULT_OK
                     val fileUri = data?.data!!
 
-                    Glide.with(this).load(fileUri).placeholder(R.drawable.employee_photo).into(binding!!.ivEmployeePhoto)
+                    Glide.with(this).load(fileUri).placeholder(R.drawable.employee_photo)
+                        .into(binding!!.ivEmployeePhoto)
                     updatePhoto(fileUri)
                 }
                 ImagePicker.RESULT_ERROR -> {
@@ -84,9 +85,12 @@ class EmployeeDetailActivity : AppCompatActivity() {
         binding?.tvChangePhoto?.setOnClickListener {
 //            Toast.makeText(this,"CHANGE PHOTO", Toast.LENGTH_SHORT).show()
             ImagePicker.with(this)
-                .cropSquare()	    			//Crop image(Optional), Check Customization for more option
-                .compress(1024)			//Final image size will be less than 1 MB(Optional)
-                .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
+                .cropSquare()                    //Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(
+                    1080,
+                    1080
+                )    //Final image resolution will be less than 1080 x 1080(Optional)
                 .createIntent { intent ->
                     startForProfileImageResult.launch(intent)
                 }
@@ -108,7 +112,8 @@ class EmployeeDetailActivity : AppCompatActivity() {
         val user = HawkStorage.instance(this).getUser()
         val employee = HawkStorage.instance(this).getEmployee()
         val imageUrl = BuildConfig.BASE_IMAGE_URL + user.photo
-        Glide.with(this).load(imageUrl).placeholder(R.drawable.employee_photo).into(binding!!.ivEmployeePhoto)
+        Glide.with(this).load(imageUrl).placeholder(R.drawable.employee_photo)
+            .into(binding!!.ivEmployeePhoto)
         binding?.tvFullName?.text = user.name
         binding?.tvEmployeeId?.text = Helpers.employeeIdFormat(employee.employeeId)
         binding?.tvEmail?.text = employee.email
@@ -123,30 +128,39 @@ class EmployeeDetailActivity : AppCompatActivity() {
     private fun updatePhoto(photoPath: Uri) {
         val token = HawkStorage.instance(this).getToken()
         MyDialog.showProgressDialog(this)
-        val file = File(photoPath.path)
-        val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", file)
+        val file = File(photoPath.path!!)
+        val uri =
+            FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", file)
         val typeFile = this.contentResolver.getType(uri)
         val mediaTypeFile = typeFile?.toMediaType()
         val requestPhotoFile = file.asRequestBody(mediaTypeFile)
         val multipartBody = MultipartBody.Part.createFormData("photo", file.name, requestPhotoFile)
         ApiServices.getAbsentServices()
             .updatePhoto("Bearer $token", multipartBody)
-            .enqueue(object : Callback<Wrapper<UploadPhotoResponse>>{
+            .enqueue(object : Callback<Wrapper<UploadPhotoResponse>> {
                 override fun onResponse(
                     call: Call<Wrapper<UploadPhotoResponse>>,
                     response: Response<Wrapper<UploadPhotoResponse>>
                 ) {
                     MyDialog.hideDialog()
-                    if (response.isSuccessful){
+                    if (response.isSuccessful) {
                         val user = response.body()?.data?.user
-                        if (user != null){
+                        if (user != null) {
                             HawkStorage.instance(this@EmployeeDetailActivity).setUser(user)
                             updateView()
-                            Toast.makeText(this@EmployeeDetailActivity, "Change Photo Successfully.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@EmployeeDetailActivity,
+                                "Change Photo Successfully.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
-                    }else{
-                        Toast.makeText(this@EmployeeDetailActivity, "Change Photo Fails.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            this@EmployeeDetailActivity,
+                            "Change Photo Fails.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -158,7 +172,7 @@ class EmployeeDetailActivity : AppCompatActivity() {
             })
     }
 
-    companion object{
+    companion object {
         private val TAG = EmployeeDetailActivity::class.java.simpleName
     }
 

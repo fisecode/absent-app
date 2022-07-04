@@ -59,4 +59,19 @@ interface AbsentApiServices {
     @Headers("Accept: application/json")
     @GET("absent/spot")
     fun getAbsentSpot(@Header("Authorization") token: String): Call<Wrapper<AbsentSpotResponse>>
+
+    @Multipart
+    @Headers("Accept: application/json")
+    @POST("absent")
+    fun absent(@Header("Authorization") token: String,
+               @PartMap params: HashMap<String, RequestBody>,
+               @Part photo: MultipartBody.Part
+    ): Call<Wrapper<AbsentResponse>>
+
+    @Headers("Accept: application/json")
+    @GET("absent/history")
+    fun getHistoryAbsent(@Header("Authorization") token: String,
+                             @Query("from") fromDate: String,
+                             @Query("to") toDate: String
+    ): Call<Wrapper<AbsentHistoryResponse>>
 }

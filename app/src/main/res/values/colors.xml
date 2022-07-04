@@ -15,5 +15,6 @@
     <color name="background">#FAFAFA</color>
     <color name="green">#2FD686</color>
     <color name="grey">#C1C1C1</color>
+    <color name="btn_active">#2FD686</color>
 
 </resources>
