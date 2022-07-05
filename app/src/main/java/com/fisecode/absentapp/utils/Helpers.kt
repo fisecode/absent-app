@@ -16,6 +16,12 @@ object Helpers {
         return parser.parse(this)
     }
 
+    fun String.toTime(dateFormat: String = "HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
     fun String.toDateForServer(dateFormat: String = "dd MMM yyyy", timeZone: TimeZone = TimeZone.getDefault()): Date {
         val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
         parser.timeZone = timeZone
@@ -29,8 +35,10 @@ object Helpers {
     }
 
     fun getCurrentDateForServer(): String{
+        val timeZone = TimeZone.getTimeZone("UTC")
         val currentTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        dateFormat.timeZone = timeZone
         return dateFormat.format(currentTime)
     }
 }

@@ -38,6 +38,8 @@ import com.fisecode.absentapp.model.*
 import com.fisecode.absentapp.networking.ApiServices
 import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.utils.Helpers
+import com.fisecode.absentapp.utils.Helpers.formatTo
+import com.fisecode.absentapp.utils.Helpers.toTime
 import com.fisecode.absentapp.views.absentspot.AbsentSpotActivity
 import com.fisecode.absentapp.views.history.HistoryActivity
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -95,11 +97,14 @@ class AbsentFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAbsentBinding.inflate(inflater, container, false)
+        checkIfAlreadyPresent()
         return binding?.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkIfAlreadyPresent()
         init()
         onClick()
         checkPermissionApp()
@@ -107,9 +112,10 @@ class AbsentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        checkIfAlreadyPresent()
         getUserData()
         getAbsentSpot()
+        checkIsPresent()
+        checkIsCheckIn()
     }
 
     override fun onDestroy() {
@@ -146,7 +152,7 @@ class AbsentFragment : Fragment() {
         }
         binding?.btnCheckOut?.setOnClickListener {
             val token = HawkStorage.instance(context).getToken()
-            if (isCheckIn){
+            if (isCheckIn) {
                 sendDataAbsentOut(token, "out")
             }
         }
@@ -307,7 +313,8 @@ class AbsentFragment : Fragment() {
                             MyDialog.dynamicDialog(
                                 context,
                                 getString(R.string.alert),
-                                response.message())
+                                response.message()
+                            )
                         }
                     }
 
@@ -356,7 +363,8 @@ class AbsentFragment : Fragment() {
                         MyDialog.dynamicDialog(
                             context,
                             getString(R.string.alert),
-                            getString(R.string.something_wrong))
+                            getString(R.string.something_wrong)
+                        )
                     }
                 }
 
@@ -375,28 +383,40 @@ class AbsentFragment : Fragment() {
 
         ApiServices.getAbsentServices()
             .getHistoryAbsent("Bearer $token", currentDate, currentDate)
-            .enqueue(object :Callback<Wrapper<AbsentHistoryResponse>>{
+            .enqueue(object : Callback<Wrapper<AbsentHistoryResponse>> {
                 override fun onResponse(
                     call: Call<Wrapper<AbsentHistoryResponse>>,
                     response: Response<Wrapper<AbsentHistoryResponse>>
                 ) {
-                    if (response.isSuccessful){
+                    if (response.isSuccessful) {
                         val histories = response.body()?.data?.absent
-                        if (histories != null && histories.isNotEmpty()){
-                            if (histories[0].status == "Present"){
+                        HawkStorage.instance(context).setAbsent(histories)
+                        if (histories != null && histories.isNotEmpty()) {
+                            if (histories[0].status == "Present") {
 //                                HawkStorage.instance(context).setAbsent(histories)
                                 isCheckIn = false
+                                binding?.tvTimeCheckIn?.text = histories[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+                                binding?.tvTimeCheckOut?.text = histories[0].checkOut.toString().toTime("HH:mm:ss")?.formatTo("HH:mm")
                                 checkIsCheckIn()
                                 binding?.btnCheckIn?.visibility = View.GONE
                                 binding?.btnCheckOut?.visibility = View.GONE
                                 binding?.tvPresentInfo?.visibility = View.VISIBLE
-                            }else{
+                            } else {
                                 isCheckIn = true
                                 checkIsCheckIn()
                                 binding?.btnCheckIn?.visibility = View.VISIBLE
                                 binding?.btnCheckOut?.visibility = View.VISIBLE
                                 binding?.tvPresentInfo?.visibility = View.GONE
                             }
+                        } else if (!isCheckIn){
+                            isCheckIn = true
+                            binding?.btnCheckIn?.visibility = View.VISIBLE
+                            binding?.btnCheckOut?.visibility = View.VISIBLE
+                            binding?.tvPresentInfo?.visibility = View.GONE
+                            binding?.tvTimeCheckIn?.text = "-"
+                            binding?.tvTimeCheckOut?.text = "-"
+                        }else{
+                            isCheckIn = true
                         }
                     }
                 }
@@ -408,15 +428,56 @@ class AbsentFragment : Fragment() {
             })
     }
 
-    private fun checkIsCheckIn() {
-        if (isCheckIn){
-            binding?.btnCheckIn?.isEnabled = false
-            binding?.btnCheckIn?.backgroundTintList = getColorStateList(requireContext(), android.R.color.darker_gray)
-            binding?.btnCheckOut?.backgroundTintList = getColorStateList(requireContext(), R.color.btn_active)
+    private fun checkIsPresent() {
+        val absent = HawkStorage.instance(context).getAbsent()
+        if (absent != null && absent.isNotEmpty()) {
+            if (absent[0].status == "Present") {
+                isCheckIn = false
+                checkIsCheckIn()
+                binding?.tvTimeCheckIn?.text = absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+                binding?.tvTimeCheckOut?.text = absent[0].checkOut.toString().toTime("HH:mm:ss")?.formatTo("HH:mm")
+                binding?.btnCheckIn?.visibility = View.GONE
+                binding?.btnCheckOut?.visibility = View.GONE
+                binding?.tvPresentInfo?.visibility = View.VISIBLE
+
+            } else {
+                isCheckIn = true
+                checkIsCheckIn()
+                binding?.btnCheckIn?.visibility = View.VISIBLE
+                binding?.btnCheckOut?.visibility = View.VISIBLE
+                binding?.tvPresentInfo?.visibility = View.GONE
+            }
+        } else if (!isCheckIn){
+            isCheckIn = true
+            binding?.btnCheckIn?.visibility = View.VISIBLE
+            binding?.btnCheckOut?.visibility = View.VISIBLE
+            binding?.tvPresentInfo?.visibility = View.GONE
+            binding?.tvTimeCheckIn?.text = "-"
+            binding?.tvTimeCheckOut?.text = "-"
         }else{
+            isCheckIn = true
+        }
+    }
+
+    private fun checkIsCheckIn() {
+        val absent = HawkStorage.instance(context).getAbsent()
+        if (isCheckIn) {
+            isCheckIn = true
+            if (absent != null && absent.isNotEmpty()) {
+                binding?.tvTimeCheckIn?.text = absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+            }
+            binding?.btnCheckOut?.isEnabled = true
+            binding?.btnCheckIn?.isEnabled = false
+            binding?.btnCheckIn?.backgroundTintList =
+                getColorStateList(requireContext(), android.R.color.darker_gray)
+            binding?.btnCheckOut?.backgroundTintList =
+                getColorStateList(requireContext(), R.color.btn_active)
+        } else {
             binding?.btnCheckOut?.isEnabled = false
-            binding?.btnCheckOut?.backgroundTintList = getColorStateList(requireContext(), android.R.color.darker_gray)
-            binding?.btnCheckIn?.backgroundTintList = getColorStateList(requireContext(), R.color.btn_active)
+            binding?.btnCheckOut?.backgroundTintList =
+                getColorStateList(requireContext(), android.R.color.darker_gray)
+            binding?.btnCheckIn?.backgroundTintList =
+                getColorStateList(requireContext(), R.color.btn_active)
         }
     }
 
