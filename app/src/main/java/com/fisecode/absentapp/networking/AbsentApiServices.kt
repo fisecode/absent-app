@@ -81,4 +81,12 @@ interface AbsentApiServices {
                              @Query("from") fromDate: String,
                              @Query("to") toDate: String
     ): Call<Wrapper<AbsentHistoryResponse>>
+
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @POST("password/reset")
+    fun changePassword(@Header("Authorization") token: String, @Body body: String): Call<Wrapper<ChangePasswordResponse>>
+
+    @Headers("Accept: application/json", "Content-Type: application/json")
+    @POST("password/forgot")
+    fun forgotPasswordRequest(@Body body: String): Call<ForgotPasswordResponse>
 }

@@ -12,5 +12,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >@color/color_primary_dark</item>
         <!-- Customize your theme here. -->
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
     </style>
 </resources>

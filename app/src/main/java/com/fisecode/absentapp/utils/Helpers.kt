@@ -10,6 +10,16 @@ object Helpers {
         return "LMS00$id"
     }
 
+    fun Date.toCalendar(): Calendar{
+        val calendar = Calendar.getInstance()
+        calendar.time = this
+        return calendar
+    }
+
+    fun Calendar.toDateCalendar(): Date{
+        return this.time
+    }
+
     fun String.toDate(dateFormat: String = "yyyy-MM-dd", timeZone: TimeZone = TimeZone.getTimeZone("Asia/Jakarta")): Date? {
         val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
         parser.timeZone = timeZone

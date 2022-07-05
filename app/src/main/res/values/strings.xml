@@ -73,4 +73,6 @@
     <string name="check_in_success">Check In Success</string>
     <string name="check_out_seccess">Check Out Success</string>
     <string name="you_are_outside_the_absence_area">You are outside the absence area</string>
+    <string name="your_password_has_been_update">Your password has been update</string>
+    <string name="your_password_didnt_match">Your password didn\'t match</string>
 </resources>

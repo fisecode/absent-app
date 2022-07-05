@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -17,7 +16,6 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +26,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources.getColorStateList
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.fisecode.absentapp.BuildConfig
@@ -42,14 +39,11 @@ import com.fisecode.absentapp.networking.RetrofitClient
 import com.fisecode.absentapp.utils.Helpers
 import com.fisecode.absentapp.utils.Helpers.formatTo
 import com.fisecode.absentapp.utils.Helpers.toTime
-import com.fisecode.absentapp.views.absentspot.AbsentSpotActivity
 import com.fisecode.absentapp.views.history.HistoryActivity
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -70,7 +64,6 @@ import kotlin.math.*
 class AbsentFragment : Fragment() {
 
     companion object {
-        private const val REQUEST_CODE_MAP_PERMISSIONS = 1000
         private const val REQUEST_CODE_LOCATION = 2000
         private val TAG = AbsentFragment::class.java.simpleName
     }
@@ -89,8 +82,6 @@ class AbsentFragment : Fragment() {
     private var currentLocation: Location? = null
     private lateinit var locationCallBack: LocationCallback
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
-
-    private var currentPhotoPath = ""
     private var isCheckIn = false
 
     override fun onCreateView(
@@ -666,7 +657,6 @@ class AbsentFragment : Fragment() {
         { permissions ->
             run {
                 var isHasPermission = false
-                val permissionNotGranted = StringBuilder()
 
                 for (i in permissions.values) {
                     isHasPermission = i
@@ -683,14 +673,15 @@ class AbsentFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).setAction(getString(
                         R.string.settings
-                    ), View.OnClickListener {
+                    )
+                    ) {
                         startActivity(
                             Intent(
                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                                 Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
                             )
                         )
-                    }).show()
+                    }.show()
                 }
             }
 //            when {
