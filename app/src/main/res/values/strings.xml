@@ -69,8 +69,8 @@
     <string name="successfully_allowed">Successfully allowed</string>
     <string name="app_permission_denied">App permission denied.</string>
     <string name="settings">Settings</string>
-    <string name="you_are_outside_the_absent_area">You are outside the absent area.</string>
     <string name="you_are_already_present_today">You are already present today.</string>
     <string name="check_in_success">Check In Success</string>
     <string name="check_out_seccess">Check Out Success</string>
+    <string name="you_are_outside_the_absence_area">You are outside the absence area</string>
 </resources>

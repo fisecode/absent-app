@@ -2,6 +2,8 @@ package com.fisecode.absentapp.views.absent
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -121,16 +123,22 @@ class AbsentFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
+        MyDialog.hideDialog()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MyDialog.hideDialog()
     }
 
     private fun init() {
         updateView()
         //Setup Location
         fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
+            LocationServices.getFusedLocationProviderClient(requireContext())
         locationManager =
             context?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        settingsClient = LocationServices.getSettingsClient(requireActivity())
+        settingsClient = LocationServices.getSettingsClient(requireContext())
         locationRequest = LocationRequest.create().apply {
             interval = 1000 * 5
             priority = Priority.PRIORITY_HIGH_ACCURACY
@@ -145,7 +153,7 @@ class AbsentFragment : Fragment() {
             context?.startActivity<HistoryActivity>()
         }
         binding?.btnCheckIn?.setOnClickListener {
-            MyDialog.showProgressDialog(context)
+            MyDialog.showProgressDialog(requireContext())
             Handler(Looper.getMainLooper()).postDelayed({
                 getLastLocation()
             }, 2000)
@@ -153,7 +161,16 @@ class AbsentFragment : Fragment() {
         binding?.btnCheckOut?.setOnClickListener {
             val token = HawkStorage.instance(context).getToken()
             if (isCheckIn) {
-                sendDataAbsentOut(token, "out")
+                AlertDialog.Builder(context)
+                    .setTitle(getString(R.string.check_out))
+                    .setMessage(getString(R.string.are_you_sure))
+                    .setPositiveButton(getString(R.string.yes)){ dialog, _ ->
+                        sendDataAbsentOut(token, "out", dialog)
+                    }
+                    .setNegativeButton(getString(R.string.no)){dialog, _->
+                        dialog.dismiss()
+                    }
+                    .show()
             }
         }
     }
@@ -162,62 +179,72 @@ class AbsentFragment : Fragment() {
         if (checkPermission()) {
             if (isLocationEnabled()) {
                 val absentSpot = HawkStorage.instance(context).getAbsentSpot()
-                if (absentSpot?.status == "Approved") {
-                    locationCallBack = object : LocationCallback() {
-                        override fun onLocationResult(locationResult: LocationResult) {
-                            super.onLocationResult(locationResult)
-                            currentLocation = locationResult.lastLocation
+                when (absentSpot?.status) {
+                    "Approved" -> {
+                        locationCallBack = object : LocationCallback() {
+                            override fun onLocationResult(locationResult: LocationResult) {
+                                super.onLocationResult(locationResult)
+                                currentLocation = locationResult.lastLocation
 
-                            if (currentLocation != null) {
-                                val currentLat = currentLocation?.latitude
-                                val currentLong = currentLocation?.longitude
-                                val absentSpotLat = absentSpot.latitude?.toDouble()
-                                val absentSpotLong = absentSpot.longitude?.toDouble()
+                                if (currentLocation != null) {
+                                    val currentLat = currentLocation?.latitude
+                                    val currentLong = currentLocation?.longitude
+                                    val absentSpotLat = absentSpot.latitude?.toDouble()
+                                    val absentSpotLong = absentSpot.longitude?.toDouble()
 
-                                val geofence = calculateDistance(
-                                    currentLat!!,
-                                    currentLong!!,
-                                    absentSpotLat!!,
-                                    absentSpotLong!!
-                                ) * 1000
+                                    val geofence = calculateDistance(
+                                        currentLat!!,
+                                        currentLong!!,
+                                        absentSpotLat!!,
+                                        absentSpotLong!!
+                                    ) * 1000
 
-                                if (geofence < 100.0) {
-                                    ImagePicker.with(this@AbsentFragment)
-                                        .cameraOnly()  //Final image resolution will be less than 1080 x 1080(Optional)
-                                        .createIntent { intent ->
-                                            startForProfileImageResult.launch(intent)
-                                        }
-                                    Toast.makeText(
-                                        context,
-                                        getString(R.string.success),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    MyDialog.dynamicDialog(
-                                        context,
-                                        getString(R.string.failed),
-                                        getString(R.string.you_are_outside_the_absent_area)
-                                    )
+                                    if (geofence < 100.0) {
+                                        ImagePicker.with(this@AbsentFragment)
+                                            .cameraOnly()  //Final image resolution will be less than 1080 x 1080(Optional)
+                                            .createIntent { intent ->
+                                                startForProfileImageResult.launch(intent)
+                                            }
+                                        Toast.makeText(
+                                            context,
+                                            getString(R.string.success),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        AlertDialog.Builder(context)
+                                            .setTitle(getString(R.string.failed))
+                                            .setMessage(getString(R.string.you_are_outside_the_absence_area))
+                                            .show()
+                                    }
+
+
                                 }
-
-
+                                fusedLocationProviderClient?.removeLocationUpdates(this)
+                                MyDialog.hideDialog()
                             }
-                            fusedLocationProviderClient?.removeLocationUpdates(this)
-                            MyDialog.hideDialog()
                         }
+                        fusedLocationProviderClient?.requestLocationUpdates(
+                            locationRequest,
+                            locationCallBack,
+                            Looper.getMainLooper()
+                        )
                     }
-                    fusedLocationProviderClient?.requestLocationUpdates(
-                        locationRequest,
-                        locationCallBack,
-                        Looper.getMainLooper()
-                    )
-                } else {
-                    MyDialog.hideDialog()
-                    MyDialog.dynamicDialog(
-                        context,
-                        getString(R.string.failed),
-                        "Your absence spot is waiting for approval."
-                    )
+                    "Reject" -> {
+                        MyDialog.hideDialog()
+                        MyDialog.dynamicDialog(
+                            context,
+                            getString(R.string.failed),
+                            "Your spot of absence is reject."
+                        )
+                    }
+                    else -> {
+                        MyDialog.hideDialog()
+                        MyDialog.dynamicDialog(
+                            context,
+                            getString(R.string.failed),
+                            "Your spot of absence is pending approval."
+                        )
+                    }
                 }
 
             } else {
@@ -328,7 +355,7 @@ class AbsentFragment : Fragment() {
         }
     }
 
-    private fun sendDataAbsentOut(token: String, type: String) {
+    private fun sendDataAbsentOut(token: String, type: String, dialog: DialogInterface?) {
         val params = HashMap<String, RequestBody>()
         MyDialog.showProgressDialog(context)
         val mediaTypeText = MultipartBody.FORM
@@ -342,6 +369,7 @@ class AbsentFragment : Fragment() {
                     call: Call<Wrapper<AbsentResponse>>,
                     response: Response<Wrapper<AbsentResponse>>
                 ) {
+                    dialog?.dismiss()
                     MyDialog.hideDialog()
                     if (response.isSuccessful) {
                         val absentResponse = response.body()
@@ -395,8 +423,11 @@ class AbsentFragment : Fragment() {
                             if (histories[0].status == "Present") {
 //                                HawkStorage.instance(context).setAbsent(histories)
                                 isCheckIn = false
-                                binding?.tvTimeCheckIn?.text = histories[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
-                                binding?.tvTimeCheckOut?.text = histories[0].checkOut.toString().toTime("HH:mm:ss")?.formatTo("HH:mm")
+                                binding?.tvTimeCheckIn?.text =
+                                    histories[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+                                binding?.tvTimeCheckOut?.text =
+                                    histories[0].checkOut.toString().toTime("HH:mm:ss")
+                                        ?.formatTo("HH:mm")
                                 checkIsCheckIn()
                                 binding?.btnCheckIn?.visibility = View.GONE
                                 binding?.btnCheckOut?.visibility = View.GONE
@@ -408,15 +439,12 @@ class AbsentFragment : Fragment() {
                                 binding?.btnCheckOut?.visibility = View.VISIBLE
                                 binding?.tvPresentInfo?.visibility = View.GONE
                             }
-                        } else if (!isCheckIn){
-                            isCheckIn = true
+                        } else if (!isCheckIn) {
                             binding?.btnCheckIn?.visibility = View.VISIBLE
                             binding?.btnCheckOut?.visibility = View.VISIBLE
                             binding?.tvPresentInfo?.visibility = View.GONE
                             binding?.tvTimeCheckIn?.text = "-"
                             binding?.tvTimeCheckOut?.text = "-"
-                        }else{
-                            isCheckIn = true
                         }
                     }
                 }
@@ -434,8 +462,10 @@ class AbsentFragment : Fragment() {
             if (absent[0].status == "Present") {
                 isCheckIn = false
                 checkIsCheckIn()
-                binding?.tvTimeCheckIn?.text = absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
-                binding?.tvTimeCheckOut?.text = absent[0].checkOut.toString().toTime("HH:mm:ss")?.formatTo("HH:mm")
+                binding?.tvTimeCheckIn?.text =
+                    absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+                binding?.tvTimeCheckOut?.text =
+                    absent[0].checkOut.toString().toTime("HH:mm:ss")?.formatTo("HH:mm")
                 binding?.btnCheckIn?.visibility = View.GONE
                 binding?.btnCheckOut?.visibility = View.GONE
                 binding?.tvPresentInfo?.visibility = View.VISIBLE
@@ -447,24 +477,21 @@ class AbsentFragment : Fragment() {
                 binding?.btnCheckOut?.visibility = View.VISIBLE
                 binding?.tvPresentInfo?.visibility = View.GONE
             }
-        } else if (!isCheckIn){
-            isCheckIn = true
+        } else if (!isCheckIn) {
             binding?.btnCheckIn?.visibility = View.VISIBLE
             binding?.btnCheckOut?.visibility = View.VISIBLE
             binding?.tvPresentInfo?.visibility = View.GONE
             binding?.tvTimeCheckIn?.text = "-"
             binding?.tvTimeCheckOut?.text = "-"
-        }else{
-            isCheckIn = true
         }
     }
 
     private fun checkIsCheckIn() {
         val absent = HawkStorage.instance(context).getAbsent()
         if (isCheckIn) {
-            isCheckIn = true
             if (absent != null && absent.isNotEmpty()) {
-                binding?.tvTimeCheckIn?.text = absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
+                binding?.tvTimeCheckIn?.text =
+                    absent[0].checkIn?.toTime("HH:mm:ss")?.formatTo("HH:mm")
             }
             binding?.btnCheckOut?.isEnabled = true
             binding?.btnCheckIn?.isEnabled = false

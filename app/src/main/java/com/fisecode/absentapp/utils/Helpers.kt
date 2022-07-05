@@ -10,13 +10,13 @@ object Helpers {
         return "LMS00$id"
     }
 
-    fun String.toDate(dateFormat: String = "yyyy-MM-dd", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+    fun String.toDate(dateFormat: String = "yyyy-MM-dd", timeZone: TimeZone = TimeZone.getTimeZone("Asia/Jakarta")): Date? {
         val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
         parser.timeZone = timeZone
         return parser.parse(this)
     }
 
-    fun String.toTime(dateFormat: String = "HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+    fun String.toTime(dateFormat: String = "HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("Asia/Jakarta")): Date? {
         val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
         parser.timeZone = timeZone
         return parser.parse(this)
@@ -35,10 +35,10 @@ object Helpers {
     }
 
     fun getCurrentDateForServer(): String{
-        val timeZone = TimeZone.getTimeZone("UTC")
+//        val timeZone = TimeZone.getTimeZone("UTC")
         val currentTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        dateFormat.timeZone = timeZone
+//        dateFormat.timeZone = timeZone
         return dateFormat.format(currentTime)
     }
 }

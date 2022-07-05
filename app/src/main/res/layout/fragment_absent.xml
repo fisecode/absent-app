@@ -174,7 +174,8 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:backgroundTint="@color/btn_active" />
+                    app:backgroundTint="@color/btn_active"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <Button
                     android:id="@+id/btn_check_out"
@@ -247,9 +248,10 @@
                         android:id="@+id/tv_current_month"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:format12Hour="MMM"
-                        android:format24Hour="MMM"
+                        android:format12Hour="MMMM"
+                        android:format24Hour="MMMM"
                         android:textStyle="bold"
+                        android:textSize="20sp"
                         android:textColor="@android:color/white" />
 
 <!--                    <TextView-->
@@ -295,6 +297,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_text"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/color_primary"
                     android:layout_marginTop="8dp"
@@ -308,6 +311,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_text"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/color_primary"
                     android:layout_marginTop="8dp"
