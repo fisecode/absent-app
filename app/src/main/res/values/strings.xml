@@ -75,4 +75,7 @@
     <string name="you_are_outside_the_absence_area">You are outside the absence area</string>
     <string name="your_password_has_been_update">Your password has been update</string>
     <string name="your_password_didnt_match">Your password didn\'t match</string>
+    <string name="your_spot_of_absence_is_rejected">Your spot of absence is rejected.</string>
+    <string name="your_place_of_absence_is_awaiting_approval">Your place of absence is awaiting approval.</string>
+    <string name="you_do_not_have_a_absent_spot_please_apply_for_your_absent_spot">You do not have a absent spot, please apply for your absent spot.</string>
 </resources>

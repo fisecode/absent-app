@@ -1,5 +1,6 @@
 package com.fisecode.absentapp.views.leave
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +45,7 @@ class LeaveAdapter(
                         binding.tvStatusHeader.setTextColor(Color.parseColor("#2FD686"))
                     }
                     else -> {
-                        binding.tvStatusHeader.setTextColor(Color.parseColor("#FFB931"))
+                        binding.tvStatusHeader.setTextColor(Color.parseColor("#FFB900"))
                     }
                 }
                 binding.clExpand.visibility = if (this.expand) View.VISIBLE else View.GONE

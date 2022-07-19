@@ -183,14 +183,14 @@ class AbsentFragment : Fragment() {
                                     val absentSpotLat = absentSpot.latitude?.toDouble()
                                     val absentSpotLong = absentSpot.longitude?.toDouble()
 
-                                    val geofence = calculateDistance(
+                                    val distance = calculateDistance(
                                         currentLat!!,
                                         currentLong!!,
                                         absentSpotLat!!,
                                         absentSpotLong!!
                                     ) * 1000
 
-                                    if (geofence < 100.0) {
+                                    if (distance < 100.0) {
                                         ImagePicker.with(this@AbsentFragment)
                                             .cameraOnly()  //Final image resolution will be less than 1080 x 1080(Optional)
                                             .createIntent { intent ->
@@ -225,7 +225,15 @@ class AbsentFragment : Fragment() {
                         MyDialog.dynamicDialog(
                             context,
                             getString(R.string.failed),
-                            "Your spot of absence is reject."
+                            getString(R.string.your_spot_of_absence_is_rejected)
+                        )
+                    }
+                    "Pending" -> {
+                        MyDialog.hideDialog()
+                        MyDialog.dynamicDialog(
+                            context,
+                            getString(R.string.failed),
+                            getString(R.string.your_place_of_absence_is_awaiting_approval)
                         )
                     }
                     else -> {
@@ -233,7 +241,7 @@ class AbsentFragment : Fragment() {
                         MyDialog.dynamicDialog(
                             context,
                             getString(R.string.failed),
-                            "Your spot of absence is pending approval."
+                            getString(R.string.you_do_not_have_a_absent_spot_please_apply_for_your_absent_spot)
                         )
                     }
                 }
