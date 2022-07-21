@@ -184,7 +184,8 @@ class HistoryActivity : AppCompatActivity() {
                             }else{
                                 checkInTime = dataHistory.checkIn.toString()
                                 binding?.tvTimeCheckIn?.text = checkInTime.toTime()?.formatTo("HH:mm")
-                                break
+                                binding?.tvTimeCheckOut?.text = getString(R.string.default_text)
+                                    break
                             }
                         }else{
                             binding?.tvTimeCheckIn?.text = getString(R.string.default_text)
