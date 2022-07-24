@@ -643,7 +643,7 @@ class AbsentFragment : Fragment() {
         val imageUrl = BuildConfig.BASE_IMAGE_URL + user.photo
         Glide.with(requireContext()).load(imageUrl).placeholder(R.drawable.employee_photo)
             .into(binding!!.ivEmployeePhoto)
-        binding?.tvNameEmployee?.text = user.name
+        binding?.tvNameEmployee?.text = employee.name
         binding?.tvNumberIdEmployee?.text = Helpers.employeeIdFormat(employee.employeeId)
     }
 

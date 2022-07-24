@@ -46,9 +46,10 @@ class ProfileFragment : Fragment() {
     private fun updateView() {
         val user = HawkStorage.instance(context).getUser()
         val imageUrl = BuildConfig.BASE_IMAGE_URL + user.photo
+        val employee = HawkStorage.instance(context).getEmployee()
         Glide.with(requireContext()).load(imageUrl).placeholder(R.drawable.employee_photo).into(binding!!.imgProfilePicture)
-        binding?.tvNameProfile?.text = user.name
-        binding?.tvEmailProfile?.text = user.email
+        binding?.tvNameProfile?.text = employee.name
+        binding?.tvEmailProfile?.text = employee.email
     }
 
     private fun onClick() {

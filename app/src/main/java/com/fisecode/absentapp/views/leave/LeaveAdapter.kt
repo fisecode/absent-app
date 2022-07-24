@@ -27,7 +27,7 @@ class LeaveAdapter(
         with(holder){
             with(listData!![position]){
                 val startDate = this.startDate.toString()
-                val endDate = this.startDate.toString()
+                val endDate = this.endDate.toString()
                 binding.tvStartDateHeader.text = startDate.toDate()?.formatTo("dd MMM yyyy")
                 binding.tvEndDateHeader.text = endDate.toDate()?.formatTo("dd MMM yyyy")
                 binding.tvStatusHeader.text = this.status

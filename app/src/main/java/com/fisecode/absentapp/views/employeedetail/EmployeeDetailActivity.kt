@@ -114,7 +114,7 @@ class EmployeeDetailActivity : AppCompatActivity() {
         val imageUrl = BuildConfig.BASE_IMAGE_URL + user.photo
         Glide.with(this).load(imageUrl).placeholder(R.drawable.employee_photo)
             .into(binding!!.ivEmployeePhoto)
-        binding?.tvFullName?.text = user.name
+        binding?.tvFullName?.text = employee.name
         binding?.tvEmployeeId?.text = Helpers.employeeIdFormat(employee.employeeId)
         binding?.tvEmail?.text = employee.email
         binding?.tvDob?.text = employee.dob?.toDate()?.formatTo("dd MMM yyyy")
